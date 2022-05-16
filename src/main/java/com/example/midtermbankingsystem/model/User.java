@@ -1,5 +1,6 @@
 package com.example.midtermbankingsystem.model;
 
+import com.example.midtermbankingsystem.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,10 +15,13 @@ import javax.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Integer id;
 
     private String name;
 
     private String password;
+
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
 }

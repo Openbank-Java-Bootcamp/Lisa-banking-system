@@ -11,5 +11,6 @@ import javax.persistence.Entity;
 @Data
 @Entity
 public class StudentCheckingAccount extends Account{
+
     private String secretKey;
 }

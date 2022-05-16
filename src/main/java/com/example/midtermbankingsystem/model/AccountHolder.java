@@ -16,14 +16,8 @@ import java.util.List;
 public class AccountHolder extends User{
     private Instant dateOfBirth;
 
-    private final Role role = Role.ACCOUNT_HOLDER;
+    //private final Role role = Role.ACCOUNT_HOLDER;
 
-    @AttributeOverrides({
-            @AttributeOverride(name = "streetAddress", column = @Column(name = "primary_street")),
-            @AttributeOverride(name = "city", column = @Column(name = "primary_city")),
-            @AttributeOverride(name = "country", column = @Column(name = "primary_country")),
-            @AttributeOverride(name = "postalCode", column = @Column(name = "primary_postal"))
-    })
     @Embedded
     private Address primaryAddress;
 
@@ -43,4 +37,12 @@ public class AccountHolder extends User{
 
     @OneToMany(mappedBy = "secondaryOwner")
     private List<Account> secondaryAccountList;
+
+    public AccountHolder(Integer id, String name, String password,Instant dateOfBirth, Address primaryAddress,
+                         Address mailingAddress) {
+        super(id, name, password, Role.ACCOUNT_HOLDER);
+        this.dateOfBirth = dateOfBirth;
+        this.primaryAddress = primaryAddress;
+        this.mailingAddress = mailingAddress;
+    }
 }

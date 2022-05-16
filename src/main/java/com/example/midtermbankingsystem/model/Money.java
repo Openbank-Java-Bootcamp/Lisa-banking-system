@@ -3,6 +3,7 @@ package com.example.midtermbankingsystem.model;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import java.math.RoundingMode;
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -14,6 +15,8 @@ public class Money {
     private static final Currency USD = Currency.getInstance("USD");
     private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_EVEN;
 
+
+    @Transient
     private final Currency currency;
 
 

@@ -8,9 +8,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Entity
 public class Admin extends User{
-    private final Role role = Role.ADMIN;
+    //private final Role role = Role.ADMIN;
+
+    public Admin(Integer id, String name, String password) {
+        super(id, name, password, Role.ADMIN);
+    }
 }

@@ -13,5 +13,12 @@ import javax.persistence.Entity;
 @Entity
 public class ThirdParty extends User{
     private String hashedKey;
-    private final Role role = Role.THIRD_PARTY;
+
+    //private final Role role = Role.THIRD_PARTY;
+
+
+    public ThirdParty(Integer id, String name, String password, String hashedKey) {
+        super(id, name, password, Role.THIRD_PARTY);
+        this.hashedKey = hashedKey;
+    }
 }

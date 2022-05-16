@@ -19,6 +19,8 @@ public class Account {
     @Id
     private String id;
 
+    @AttributeOverride(name = "amount", column = @Column(name = "balance"))
+    @Embedded
     private Money balance;
 
     @ManyToOne
@@ -32,6 +34,7 @@ public class Account {
 
     private Instant creationDate;
 
+    @Enumerated(value = EnumType.STRING)
     private Status status;
 
     @OneToMany(mappedBy = "payer")

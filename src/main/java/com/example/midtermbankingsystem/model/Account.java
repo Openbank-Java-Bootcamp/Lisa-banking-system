@@ -44,4 +44,15 @@ public class Account {
     @OneToMany(mappedBy = "payee")
     private List<Transaction> payeeTransactionList;
 
+
+    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, Instant creationDate,
+                   Status status, List<Transaction> payerTransactionList, List<Transaction> payeeTransactionList) {
+        this.balance = balance;
+        this.primaryOwner = primaryOwner;
+        this.secondaryOwner = secondaryOwner;
+        this.creationDate = creationDate;
+        this.status = status;
+        this.payerTransactionList = payerTransactionList;
+        this.payeeTransactionList = payeeTransactionList;
+    }
 }

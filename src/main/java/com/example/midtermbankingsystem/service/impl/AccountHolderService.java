@@ -5,6 +5,7 @@ import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.service.interfaces.IAccountHolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,9 +18,12 @@ public class AccountHolderService implements IAccountHolderService {
     @Autowired
     private AccountHolderRepository accountHolderRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public List<AccountHolder> getAllAccountHolders() {
         List<AccountHolder> accountHolderList = accountHolderRepository.findAll();
-        if(accountHolderList.isEmpty()){
+        if (accountHolderList.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found in the database");
         }
         return accountHolderList;
@@ -27,7 +31,7 @@ public class AccountHolderService implements IAccountHolderService {
 
     public AccountHolder getAccountHolderById(Integer id) {
         Optional<AccountHolder> foundAccountHolder = accountHolderRepository.findById(id);
-        if(foundAccountHolder.isEmpty()){
+        if (foundAccountHolder.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with that ID");
         } else {
             return foundAccountHolder.get();
@@ -43,6 +47,10 @@ public class AccountHolderService implements IAccountHolderService {
     }
 
     public void deleteAccountHolder(Integer id) {
-
+        Optional<AccountHolder> foundAccountHolder = accountHolderRepository.findById(id);
+        if (foundAccountHolder.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with that ID");
+        }
+        accountHolderRepository.delete(foundAccountHolder.get());
     }
 }

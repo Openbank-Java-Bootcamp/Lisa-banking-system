@@ -19,7 +19,7 @@ public class CheckingAccountService implements ICheckingAccountService {
 
     public List<CheckingAccount> getAllCheckingAccounts() {
         List<CheckingAccount> checkingAccountList = checkingAccountRepository.findAll();
-        if(checkingAccountList.isEmpty()){
+        if (checkingAccountList.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Checking Accounts found in the database");
         }
         return checkingAccountList;
@@ -27,7 +27,7 @@ public class CheckingAccountService implements ICheckingAccountService {
 
     public CheckingAccount getCheckingAccountById(String id) {
         Optional<CheckingAccount> foundCheckingAccount = checkingAccountRepository.findById(id);
-        if(foundCheckingAccount.isEmpty()){
+        if (foundCheckingAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Checking Account found with that ID");
         } else {
             return foundCheckingAccount.get();
@@ -43,6 +43,10 @@ public class CheckingAccountService implements ICheckingAccountService {
     }
 
     public void deleteCheckingAccount(String id) {
-
+        Optional<CheckingAccount> foundCheckingAccount = checkingAccountRepository.findById(id);
+        if (foundCheckingAccount.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Credit Card Account found with that ID");
+        }
+        checkingAccountRepository.delete(foundCheckingAccount.get());
     }
 }

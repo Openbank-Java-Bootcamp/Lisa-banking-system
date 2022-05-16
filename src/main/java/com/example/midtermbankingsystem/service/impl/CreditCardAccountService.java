@@ -19,7 +19,7 @@ public class CreditCardAccountService implements ICreditCardAccountService {
 
     public List<CreditCardAccount> getAllCreditCardAccounts() {
         List<CreditCardAccount> creditCardAccountList = creditCardAccountRepository.findAll();
-        if(creditCardAccountList.isEmpty()){
+        if (creditCardAccountList.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Credit Card Accounts found in the database");
         }
         return creditCardAccountList;
@@ -27,7 +27,7 @@ public class CreditCardAccountService implements ICreditCardAccountService {
 
     public CreditCardAccount getCreditCardAccountById(String id) {
         Optional<CreditCardAccount> foundCreditCardAccount = creditCardAccountRepository.findById(id);
-        if(foundCreditCardAccount.isEmpty()){
+        if (foundCreditCardAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Credit Card Account found with that ID");
         } else {
             return foundCreditCardAccount.get();
@@ -43,6 +43,10 @@ public class CreditCardAccountService implements ICreditCardAccountService {
     }
 
     public void deleteCreditCardAccount(String id) {
-
+        Optional<CreditCardAccount> foundCreditCardAccount = creditCardAccountRepository.findById(id);
+        if (foundCreditCardAccount.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Credit Card Account found with that ID");
+        }
+        creditCardAccountRepository.delete(foundCreditCardAccount.get());
     }
 }

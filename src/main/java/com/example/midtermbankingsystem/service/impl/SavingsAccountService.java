@@ -19,7 +19,7 @@ public class SavingsAccountService implements ISavingsAccountService {
 
     public List<SavingsAccount> getAllSavingsAccounts() {
         List<SavingsAccount> savingsAccountList = savingsAccountRepository.findAll();
-        if(savingsAccountList.isEmpty()){
+        if (savingsAccountList.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Savings Accounts found in the database");
         }
         return savingsAccountList;
@@ -27,7 +27,7 @@ public class SavingsAccountService implements ISavingsAccountService {
 
     public SavingsAccount getSavingsAccountById(String id) {
         Optional<SavingsAccount> foundSavingsAccount = savingsAccountRepository.findById(id);
-        if(foundSavingsAccount.isEmpty()){
+        if (foundSavingsAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Savings Account found with that ID");
         } else {
             return foundSavingsAccount.get();
@@ -43,6 +43,10 @@ public class SavingsAccountService implements ISavingsAccountService {
     }
 
     public void deleteSavingsAccount(String id) {
-
+        Optional<SavingsAccount> foundSavingsAccount = savingsAccountRepository.findById(id);
+        if (foundSavingsAccount.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Savings Account found with that ID");
+        }
+        savingsAccountRepository.delete(foundSavingsAccount.get());
     }
 }

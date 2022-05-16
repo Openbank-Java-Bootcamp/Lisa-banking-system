@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 public class Admin extends User{
     //private final Role role = Role.ADMIN;
 
-    public Admin(Integer id, String name, String password) {
-        super(id, name, password, Role.ADMIN);
+    public Admin( String name, String password) {
+        super( name, password, Role.ADMIN);
     }
 }

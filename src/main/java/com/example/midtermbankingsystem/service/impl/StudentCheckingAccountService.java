@@ -19,7 +19,7 @@ public class StudentCheckingAccountService implements IStudentCheckingAccountSer
 
     public List<StudentCheckingAccount> getAllStudentCheckingAccounts() {
         List<StudentCheckingAccount> studentCheckingAccountList = studentCheckingAccountRepository.findAll();
-        if(studentCheckingAccountList.isEmpty()){
+        if (studentCheckingAccountList.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Student Checking Accounts found in the database");
         }
         return studentCheckingAccountList;
@@ -27,7 +27,7 @@ public class StudentCheckingAccountService implements IStudentCheckingAccountSer
 
     public StudentCheckingAccount getStudentCheckingAccountById(String id) {
         Optional<StudentCheckingAccount> foundStudentCheckingAccount = studentCheckingAccountRepository.findById(id);
-        if(foundStudentCheckingAccount.isEmpty()){
+        if (foundStudentCheckingAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Student Checking Account found with that ID");
         } else {
             return foundStudentCheckingAccount.get();
@@ -43,6 +43,10 @@ public class StudentCheckingAccountService implements IStudentCheckingAccountSer
     }
 
     public void deleteStudentCheckingAccount(String id) {
-
+        Optional<StudentCheckingAccount> foundStudentCheckingAccount = studentCheckingAccountRepository.findById(id);
+        if (foundStudentCheckingAccount.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Student Checking Account found with that ID");
+        }
+        studentCheckingAccountRepository.delete(foundStudentCheckingAccount.get());
     }
 }

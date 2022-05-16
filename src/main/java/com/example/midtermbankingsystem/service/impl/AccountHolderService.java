@@ -39,11 +39,41 @@ public class AccountHolderService implements IAccountHolderService {
     }
 
     public AccountHolder saveAccountHolder(AccountHolder accountHolder) {
-        return null;
+        try {
+            return accountHolderRepository.save(new AccountHolder(
+                    accountHolder.getName(),
+                    passwordEncoder.encode(accountHolder.getPassword()),
+                    accountHolder.getDateOfBirth(),
+                    accountHolder.getPrimaryAddress(),
+                    accountHolder.getMailingAddress()
+            ));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Account Holder");
+        }
     }
 
     public void updateAccountHolder(Integer id, AccountHolder accountHolder) {
-
+        Optional<AccountHolder> foundAccountHolder = accountHolderRepository.findById(id);
+        if (foundAccountHolder.isPresent()) {
+            if (accountHolder.getName() != null) {
+                foundAccountHolder.get().setName(accountHolder.getName());
+            }
+            if (accountHolder.getPassword() != null) {
+                foundAccountHolder.get().setPassword(passwordEncoder.encode(accountHolder.getPassword()));
+            }
+            if (accountHolder.getDateOfBirth() != null) {
+                foundAccountHolder.get().setDateOfBirth(accountHolder.getDateOfBirth());
+            }
+            if (accountHolder.getPrimaryAddress() != null) {
+                foundAccountHolder.get().setPrimaryAddress(accountHolder.getPrimaryAddress());
+            }
+            if (accountHolder.getMailingAddress() != null) {
+                foundAccountHolder.get().setMailingAddress(accountHolder.getMailingAddress());
+            }
+            accountHolderRepository.save(foundAccountHolder.get());
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The Account Holder doesn't exist.");
+        }
     }
 
     public void deleteAccountHolder(Integer id) {

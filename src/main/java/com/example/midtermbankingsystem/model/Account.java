@@ -55,4 +55,21 @@ public class Account {
         this.payerTransactionList = payerTransactionList;
         this.payeeTransactionList = payeeTransactionList;
     }
+
+    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, Instant creationDate,
+                   Status status) {
+        this.balance = balance;
+        this.primaryOwner = primaryOwner;
+        this.secondaryOwner = secondaryOwner;
+        this.creationDate = creationDate;
+        this.status = status;
+    }
+
+    public Account(Money balance, AccountHolder primaryOwner, Instant creationDate, Status status) {
+        this.balance = balance;
+        this.primaryOwner = primaryOwner;
+        this.creationDate = creationDate;
+        this.status = status;
+    }
+
 }

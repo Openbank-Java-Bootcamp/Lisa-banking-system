@@ -65,14 +65,14 @@ public class ThirdPartyService implements IThirdPartyService {
 
             thirdPartyRepository.save(foundThirdParty.get());
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The Blog Post doesn't exist.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The Third Party doesn't exist.");
         }
     }
 
     public void deleteThirdParty(Integer id) {
         Optional<ThirdParty> foundThirdParty = thirdPartyRepository.findById(id);
         if (foundThirdParty.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Blog Post found with that ID");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Third Party found with that ID");
         }
         thirdPartyRepository.delete(foundThirdParty.get());
     }

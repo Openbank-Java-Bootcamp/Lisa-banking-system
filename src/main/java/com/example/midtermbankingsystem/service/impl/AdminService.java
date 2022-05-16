@@ -60,7 +60,7 @@ public class AdminService implements IAdminService {
             }
             adminRepository.save(foundAdmin.get());
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The Blog Post doesn't exist.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The Admin doesn't exist.");
         }
     }
 

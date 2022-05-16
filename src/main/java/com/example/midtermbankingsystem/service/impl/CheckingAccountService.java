@@ -1,6 +1,8 @@
 package com.example.midtermbankingsystem.service.impl;
 
+import com.example.midtermbankingsystem.model.AccountHolder;
 import com.example.midtermbankingsystem.model.CheckingAccount;
+import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.repository.CheckingAccountRepository;
 import com.example.midtermbankingsystem.service.interfaces.ICheckingAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ public class CheckingAccountService implements ICheckingAccountService {
 
     @Autowired
     private CheckingAccountRepository checkingAccountRepository;
+
+    @Autowired
+    private AccountHolderRepository accountHolderRepository;
 
     public List<CheckingAccount> getAllCheckingAccounts() {
         List<CheckingAccount> checkingAccountList = checkingAccountRepository.findAll();
@@ -35,7 +40,38 @@ public class CheckingAccountService implements ICheckingAccountService {
     }
 
     public CheckingAccount saveCheckingAccount(CheckingAccount checkingAccount) {
-        return null;
+        Optional<AccountHolder> foundAccountHolder = accountHolderRepository.findById(checkingAccount.getPrimaryOwner().getId());
+        Optional<AccountHolder> foundSecondAccountHolder = accountHolderRepository.findById(checkingAccount.getSecondaryOwner().getId());
+
+        if (foundAccountHolder.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Checking Account found with ID passed in Blog Post");
+        }
+
+        try {
+            if (foundSecondAccountHolder.isPresent())
+                return checkingAccountRepository.save(new CheckingAccount(
+                        checkingAccount.getBalance(),
+                        checkingAccount.getPrimaryOwner(),
+                        checkingAccount.getSecondaryOwner(),
+                        checkingAccount.getCreationDate(),
+                        checkingAccount.getStatus(),
+                        checkingAccount.getSecretKey(),
+                        checkingAccount.getMinimumBalance(),
+                        checkingAccount.getMonthlyMaintenanceFee()
+                ));
+            else
+                return checkingAccountRepository.save(new CheckingAccount(
+                        checkingAccount.getBalance(),
+                        checkingAccount.getPrimaryOwner(),
+                        checkingAccount.getCreationDate(),
+                        checkingAccount.getStatus(),
+                        checkingAccount.getSecretKey(),
+                        checkingAccount.getMinimumBalance(),
+                        checkingAccount.getMonthlyMaintenanceFee()
+                ));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Account Holder");
+        }
     }
 
     public void updateCheckingAccount(String id, CheckingAccount checkingAccount) {

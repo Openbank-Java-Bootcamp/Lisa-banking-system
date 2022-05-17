@@ -51,8 +51,22 @@ public class CheckingAccount extends Account {
                 dto.getMonthlyMaintenanceFee());
     }
 
+    /*
     public static CheckingAccount fromDTO (CheckingAccountDTO dto, AccountHolder primary, AccountHolder secondary){
         return new CheckingAccount(dto.getBalance(), primary, secondary, dto.getSecretKey(), dto.getMinimumBalance(),
+                dto.getMonthlyMaintenanceFee());
+    }
+    */
+
+    public static CheckingAccount fromDTO (CheckingAccountDTO dto, AccountHolder primary, AccountHolder secondary){
+        var checkingAccount =  CheckingAccount.fromDTO(dto, primary);
+        checkingAccount.setSecondaryOwner(secondary);
+        return checkingAccount;
+    }
+
+
+    public static CheckingAccount fromDTO(CheckingAccountDTO dto, AccountHolder primary) {
+        return new CheckingAccount(dto.getBalance(), primary, dto.getSecretKey(), dto.getMinimumBalance(),
                 dto.getMonthlyMaintenanceFee());
     }
 }

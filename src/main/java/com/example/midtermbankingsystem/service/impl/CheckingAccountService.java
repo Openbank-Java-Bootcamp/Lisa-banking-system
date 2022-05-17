@@ -47,8 +47,31 @@ public class CheckingAccountService implements ICheckingAccountService {
     }
 
     public CheckingAccount saveCheckingAccount(CheckingAccountDTO checkingAccountDTO) {
+
+
+        var holder1 = accountHolderRepository.findById(checkingAccountDTO.getPrimaryOwner());
+        var holder2 = accountHolderRepository.findById(checkingAccountDTO.getSecondaryOwner());
+
+        var x = holder1.map(accountHolder -> CheckingAccount.fromDTO(checkingAccountDTO, accountHolder)).orElse(null);
+        var y = holder2.isPresent() ? x.setSecondaryOwner(holder2.get()) : x;
+
+        var checkingAccount = CheckingAccount.fromDTO(checkingAccountDTO, holder1.get());
+
         log.info(Color.YELLOW_BOLD_BRIGHT + "Saving a new account {} inside of the database" + Color.RESET, checkingAccountDTO);
 
+        CheckingAccount checkingAccount = validateCheckingAccount(checkingAccountDTO);
+
+        log.info(Color.YELLOW_BOLD_BRIGHT + "Saving a ACCOUNT {} inside of the database" + Color.RESET, checkingAccount);
+
+        try {
+            return checkingAccountRepository.save(checkingAccount);
+
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Checking Account");
+        }
+    }
+
+    private CheckingAccount validateCheckingAccount(CheckingAccountDTO checkingAccountDTO) {
         Optional<AccountHolder> foundAccountHolder = null;
         Optional<AccountHolder> foundSecondAccountHolder = null;
         CheckingAccount checkingAccount = null;
@@ -56,7 +79,7 @@ public class CheckingAccountService implements ICheckingAccountService {
         if (checkingAccountDTO.getSecondaryOwner() == null) {
             foundAccountHolder = accountHolderRepository.findById(checkingAccountDTO.getPrimaryOwner());
             checkingAccount = CheckingAccount.fromDTOPrimaryOwner(checkingAccountDTO, foundAccountHolder.get());
-            log.info(Color.YELLOW_BOLD_BRIGHT + "Saving a new account {} inside of the database" + Color.RESET, checkingAccountDTO);
+
             foundAccountHolder.get().getPrimaryAccountList().add(checkingAccount);
             accountHolderRepository.save(foundAccountHolder.get());
 
@@ -70,7 +93,7 @@ public class CheckingAccountService implements ICheckingAccountService {
             foundSecondAccountHolder.get().getSecondaryAccountList().add(checkingAccount);
             accountHolderRepository.saveAll(List.of(foundAccountHolder.get(), foundSecondAccountHolder.get()));
         }
-        
+
 
         if (checkingAccountDTO.getPrimaryOwner() != null && foundAccountHolder.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with ID passed to Primary Owner");
@@ -78,15 +101,7 @@ public class CheckingAccountService implements ICheckingAccountService {
         if (checkingAccountDTO.getSecondaryOwner() != null && foundSecondAccountHolder.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with ID passed to Secondary Owner");
         }
-
-        log.info(Color.YELLOW_BOLD_BRIGHT + "Saving a ACCOUNT {} inside of the database" + Color.RESET, checkingAccount);
-
-        try {
-            return checkingAccountRepository.save(checkingAccount);
-
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Checking Account");
-        }
+        return checkingAccount;
     }
 
     public void updateCheckingAccount(Integer id, CheckingAccount checkingAccount) {

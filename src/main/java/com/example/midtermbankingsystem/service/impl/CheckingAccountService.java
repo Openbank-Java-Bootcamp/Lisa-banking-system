@@ -5,6 +5,8 @@ import com.example.midtermbankingsystem.model.CheckingAccount;
 import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.repository.CheckingAccountRepository;
 import com.example.midtermbankingsystem.service.interfaces.ICheckingAccountService;
+import com.example.midtermbankingsystem.utils.Color;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class CheckingAccountService implements ICheckingAccountService {
 
     @Autowired
@@ -40,6 +43,7 @@ public class CheckingAccountService implements ICheckingAccountService {
     }
 
     public CheckingAccount saveCheckingAccount(CheckingAccount checkingAccount) {
+        log.info(Color.YELLOW_BOLD_BRIGHT+"Saving a new account {} inside of the database"+Color.RESET, checkingAccount.toString());
         Optional<AccountHolder> foundAccountHolder = accountHolderRepository.findById(checkingAccount.getPrimaryOwner().getId());
         Optional<AccountHolder> foundSecondAccountHolder = accountHolderRepository.findById(checkingAccount.getSecondaryOwner().getId());
 

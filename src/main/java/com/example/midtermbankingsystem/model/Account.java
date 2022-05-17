@@ -20,6 +20,7 @@ public class Account {
     private String id;
 
     @AttributeOverride(name = "amount", column = @Column(name = "balance"))
+    @AttributeOverride(name = "currency", column = @Column(name = "balance_currency"))
     @Embedded
     private Money balance;
 
@@ -31,6 +32,7 @@ public class Account {
     @JoinColumn(name = "secondary_owner")
     //TODO optional ??
     private AccountHolder secondaryOwner;
+
 
     private Instant creationDate;
 

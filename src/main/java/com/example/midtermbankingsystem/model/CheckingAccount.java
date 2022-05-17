@@ -5,24 +5,27 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
 import java.time.Instant;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-public class CheckingAccount extends Account{
+public class CheckingAccount extends Account {
 
     private String secretKey;
 
     @AttributeOverride(name = "amount", column = @Column(name = "minimum_balance"))
+    @AttributeOverride(name = "currency", column = @Column(name = "minimum_balance_currency"))
     @Embedded
     private Money minimumBalance;
 
     @AttributeOverride(name = "amount", column = @Column(name = "monthly_maitenance_fee"))
+    @AttributeOverride(name = "currency", column = @Column(name = "monthly_maitenance_fee_currency"))
     @Embedded
     private Money monthlyMaintenanceFee;
 

@@ -3,6 +3,8 @@ package com.example.midtermbankingsystem.service.impl;
 import com.example.midtermbankingsystem.model.Admin;
 import com.example.midtermbankingsystem.repository.AdminRepository;
 import com.example.midtermbankingsystem.service.interfaces.IAdminService;
+import com.example.midtermbankingsystem.utils.Color;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class AdminService implements IAdminService {
 
     @Autowired
@@ -40,6 +43,7 @@ public class AdminService implements IAdminService {
 
     public Admin saveAdmin(Admin admin) {
         try {
+            log.info(Color.YELLOW_BOLD_BRIGHT+"Saving a new admin {} inside of the database"+Color.RESET, admin.getName());
             return adminRepository.save(new Admin(
                     admin.getName(),
                     passwordEncoder.encode(admin.getPassword())

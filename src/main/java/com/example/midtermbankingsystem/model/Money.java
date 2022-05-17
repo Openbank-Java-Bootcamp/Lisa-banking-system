@@ -16,7 +16,7 @@ public class Money {
     private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_EVEN;
 
 
-    @Transient
+//    @Transient
     private final Currency currency;
 
 

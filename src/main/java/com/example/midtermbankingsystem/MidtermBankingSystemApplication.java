@@ -13,8 +13,5 @@ public class MidtermBankingSystemApplication {
         SpringApplication.run(MidtermBankingSystemApplication.class, args);
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+
 }

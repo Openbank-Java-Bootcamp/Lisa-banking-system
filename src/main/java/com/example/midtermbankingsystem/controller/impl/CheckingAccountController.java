@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/api/checking-accounts")
 public class CheckingAccountController implements ICheckingAccountController {
@@ -19,7 +17,7 @@ public class CheckingAccountController implements ICheckingAccountController {
 
     @PostMapping("/admin/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public CheckingAccount saveCheckingAccount(@RequestBody @Valid CheckingAccountDTO checkingAccountDTO) {
-        return checkingAccountService.saveCheckingAccount(checkingAccountDTO);
+    public CheckingAccount saveCheckingAccount(@RequestBody CheckingAccountDTO checkingAccountDTO) {
+        return checkingAccountService.createCheckingAccount(checkingAccountDTO);
     }
 }

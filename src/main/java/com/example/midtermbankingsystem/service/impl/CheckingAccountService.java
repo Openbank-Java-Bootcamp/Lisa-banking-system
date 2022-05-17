@@ -1,21 +1,17 @@
 package com.example.midtermbankingsystem.service.impl;
 
 import com.example.midtermbankingsystem.DTO.CheckingAccountDTO;
-import com.example.midtermbankingsystem.model.Account;
 import com.example.midtermbankingsystem.model.AccountHolder;
 import com.example.midtermbankingsystem.model.CheckingAccount;
 import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.repository.CheckingAccountRepository;
 import com.example.midtermbankingsystem.service.interfaces.ICheckingAccountService;
-import com.example.midtermbankingsystem.utils.Color;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,63 +42,26 @@ public class CheckingAccountService implements ICheckingAccountService {
         }
     }
 
-    public CheckingAccount saveCheckingAccount(CheckingAccountDTO checkingAccountDTO) {
+    public CheckingAccount createCheckingAccount(CheckingAccountDTO dto) {
+
+        var primaryOwner = accountHolderRepository.findById(dto.getPrimaryOwner())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with ID " + dto.getPrimaryOwner()));
 
 
-        var holder1 = accountHolderRepository.findById(checkingAccountDTO.getPrimaryOwner());
-        var holder2 = accountHolderRepository.findById(checkingAccountDTO.getSecondaryOwner());
+        var secondaryOwner = dto.getSecondaryOwner() != null
+                ? accountHolderRepository.findById(dto.getSecondaryOwner())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with ID " + dto.getSecondaryOwner()))
+                : null;
 
-        var x = holder1.map(accountHolder -> CheckingAccount.fromDTO(checkingAccountDTO, accountHolder)).orElse(null);
-        var y = holder2.isPresent() ? x.setSecondaryOwner(holder2.get()) : x;
 
-        var checkingAccount = CheckingAccount.fromDTO(checkingAccountDTO, holder1.get());
+        var checkingAccount = secondaryOwner != null
+                ? CheckingAccount.fromDTO(dto, primaryOwner, secondaryOwner)
+                : CheckingAccount.fromDTO(dto, primaryOwner);
 
-        log.info(Color.YELLOW_BOLD_BRIGHT + "Saving a new account {} inside of the database" + Color.RESET, checkingAccountDTO);
+        return checkingAccountRepository.save(checkingAccount);
 
-        CheckingAccount checkingAccount = validateCheckingAccount(checkingAccountDTO);
-
-        log.info(Color.YELLOW_BOLD_BRIGHT + "Saving a ACCOUNT {} inside of the database" + Color.RESET, checkingAccount);
-
-        try {
-            return checkingAccountRepository.save(checkingAccount);
-
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Checking Account");
-        }
     }
 
-    private CheckingAccount validateCheckingAccount(CheckingAccountDTO checkingAccountDTO) {
-        Optional<AccountHolder> foundAccountHolder = null;
-        Optional<AccountHolder> foundSecondAccountHolder = null;
-        CheckingAccount checkingAccount = null;
-
-        if (checkingAccountDTO.getSecondaryOwner() == null) {
-            foundAccountHolder = accountHolderRepository.findById(checkingAccountDTO.getPrimaryOwner());
-            checkingAccount = CheckingAccount.fromDTOPrimaryOwner(checkingAccountDTO, foundAccountHolder.get());
-
-            foundAccountHolder.get().getPrimaryAccountList().add(checkingAccount);
-            accountHolderRepository.save(foundAccountHolder.get());
-
-        }
-        else {
-            foundAccountHolder = accountHolderRepository.findById(checkingAccountDTO.getPrimaryOwner());
-            foundSecondAccountHolder = accountHolderRepository.findById(checkingAccountDTO.getSecondaryOwner());
-            checkingAccount = CheckingAccount.fromDTO(checkingAccountDTO, foundAccountHolder.get(), foundSecondAccountHolder.get());
-
-            foundAccountHolder.get().getPrimaryAccountList().add(checkingAccount);
-            foundSecondAccountHolder.get().getSecondaryAccountList().add(checkingAccount);
-            accountHolderRepository.saveAll(List.of(foundAccountHolder.get(), foundSecondAccountHolder.get()));
-        }
-
-
-        if (checkingAccountDTO.getPrimaryOwner() != null && foundAccountHolder.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with ID passed to Primary Owner");
-        }
-        if (checkingAccountDTO.getSecondaryOwner() != null && foundSecondAccountHolder.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with ID passed to Secondary Owner");
-        }
-        return checkingAccount;
-    }
 
     public void updateCheckingAccount(Integer id, CheckingAccount checkingAccount) {
 

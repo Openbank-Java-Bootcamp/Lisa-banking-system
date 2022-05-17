@@ -4,8 +4,11 @@ import com.example.midtermbankingsystem.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,6 +27,13 @@ public class User {
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
+
+    @CreationTimestamp
+    private Instant creationDate;
+
+    @UpdateTimestamp
+    private Instant lastUpdate;
+
 
     public User(String name, String password, Role role) {
         this.name = name;

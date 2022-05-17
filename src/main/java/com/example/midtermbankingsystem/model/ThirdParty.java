@@ -1,5 +1,6 @@
 package com.example.midtermbankingsystem.model;
 
+import com.example.midtermbankingsystem.DTO.ThirdPartyDTO;
 import com.example.midtermbankingsystem.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,11 @@ public class ThirdParty extends User{
     public ThirdParty( String name, String password, String hashedKey) {
         super(name, password, Role.THIRD_PARTY);
         this.hashedKey = hashedKey;
+    }
+
+
+    public static ThirdParty fromDTO(ThirdPartyDTO dto) {
+        return new ThirdParty(dto.getName(), dto.getPassword(), dto.getHashedKey());
     }
 
 }

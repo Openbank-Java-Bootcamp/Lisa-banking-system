@@ -1,8 +1,10 @@
 package com.example.midtermbankingsystem.service.impl;
 
+import com.example.midtermbankingsystem.DTO.ThirdPartyDTO;
 import com.example.midtermbankingsystem.model.ThirdParty;
 import com.example.midtermbankingsystem.repository.ThirdPartyRepository;
 import com.example.midtermbankingsystem.service.interfaces.IThirdPartyService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,13 +40,12 @@ public class ThirdPartyService implements IThirdPartyService {
         }
     }
 
-    public ThirdParty saveThirdParty(ThirdParty thirdParty) {
+    public ThirdParty saveThirdParty(ThirdPartyDTO thirdPartyDTO) {
+        ThirdParty thirdParty = ThirdParty.fromDTO(thirdPartyDTO);
+        thirdParty.setPassword(passwordEncoder.encode(thirdPartyDTO.getPassword()));
+
         try {
-            return thirdPartyRepository.save(new ThirdParty(
-                    thirdParty.getName(),
-                    passwordEncoder.encode(thirdParty.getPassword()),
-                    thirdParty.getHashedKey()
-            ));
+            return thirdPartyRepository.save(thirdParty);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Third Party");
         }

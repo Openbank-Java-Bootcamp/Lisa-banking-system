@@ -1,5 +1,6 @@
 package com.example.midtermbankingsystem.model;
 
+import com.example.midtermbankingsystem.DTO.CheckingAccountDTO;
 import com.example.midtermbankingsystem.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,19 +30,29 @@ public class CheckingAccount extends Account {
     @Embedded
     private Money monthlyMaintenanceFee;
 
-    public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, Instant creationDate,
-                           Status status, String secretKey, Money minimumBalance, Money monthlyMaintenanceFee) {
-        super(balance, primaryOwner, secondaryOwner, creationDate, status);
+    public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner,
+                           String secretKey, Money minimumBalance, Money monthlyMaintenanceFee) {
+        super(balance, primaryOwner, secondaryOwner);
         this.secretKey = secretKey;
         this.minimumBalance = minimumBalance;
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;
     }
 
-    public CheckingAccount(Money balance, AccountHolder primaryOwner, Instant creationDate,
-                           Status status, String secretKey, Money minimumBalance, Money monthlyMaintenanceFee) {
-        super(balance, primaryOwner, creationDate, status);
+    public CheckingAccount(Money balance, AccountHolder primaryOwner,String secretKey, Money minimumBalance,
+                           Money monthlyMaintenanceFee) {
+        super(balance, primaryOwner);
         this.secretKey = secretKey;
         this.minimumBalance = minimumBalance;
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;
+    }
+
+    public static CheckingAccount fromDTOPrimaryOwner (CheckingAccountDTO dto, AccountHolder primary){
+        return new CheckingAccount(dto.getBalance(), primary, dto.getSecretKey(), dto.getMinimumBalance(),
+                dto.getMonthlyMaintenanceFee());
+    }
+
+    public static CheckingAccount fromDTO (CheckingAccountDTO dto, AccountHolder primary, AccountHolder secondary){
+        return new CheckingAccount(dto.getBalance(), primary, secondary, dto.getSecretKey(), dto.getMinimumBalance(),
+                dto.getMonthlyMaintenanceFee());
     }
 }

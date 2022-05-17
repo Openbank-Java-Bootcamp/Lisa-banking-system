@@ -5,10 +5,9 @@ import com.example.midtermbankingsystem.model.CreditCardAccount;
 import com.example.midtermbankingsystem.service.interfaces.ICreditCardAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/credit-card-accounts")
@@ -19,7 +18,7 @@ public class CreditCardAccountController implements ICreditCardAccountController
 
     @PostMapping("/admin/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreditCardAccount saveCreditCardAccount(CreditCardAccount creditCardAccount) {
+    public CreditCardAccount saveCreditCardAccount(@RequestBody @Valid CreditCardAccount creditCardAccount) {
         return creditCardAccountService.saveCreditCardAccount(creditCardAccount);
     }
 }

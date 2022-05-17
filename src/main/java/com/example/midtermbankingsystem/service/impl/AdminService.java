@@ -1,10 +1,12 @@
 package com.example.midtermbankingsystem.service.impl;
 
+import com.example.midtermbankingsystem.DTO.AdminDTO;
 import com.example.midtermbankingsystem.model.Admin;
 import com.example.midtermbankingsystem.repository.AdminRepository;
 import com.example.midtermbankingsystem.service.interfaces.IAdminService;
 import com.example.midtermbankingsystem.utils.Color;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,13 +43,13 @@ public class AdminService implements IAdminService {
         }
     }
 
-    public Admin saveAdmin(Admin admin) {
+    public Admin saveAdmin(AdminDTO adminDTO) {
+        Admin admin = Admin.fromDTO(adminDTO);
+        admin.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
+
         try {
-            log.info(Color.YELLOW_BOLD_BRIGHT+"Saving a new admin {} inside of the database"+Color.RESET, admin.getName());
-            return adminRepository.save(new Admin(
-                    admin.getName(),
-                    passwordEncoder.encode(admin.getPassword())
-            ));
+            log.info(Color.YELLOW_BOLD_BRIGHT+"Saving a new admin {} inside of the database"+Color.RESET, adminDTO.getName());
+            return adminRepository.save(admin);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Admin");
         }

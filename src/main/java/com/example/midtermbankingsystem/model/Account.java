@@ -4,10 +4,13 @@ import com.example.midtermbankingsystem.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 
 @AllArgsConstructor
@@ -24,7 +27,7 @@ public class Account {
     @Embedded
     private Money balance;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "primary_owner")
     private AccountHolder primaryOwner;
 
@@ -33,8 +36,11 @@ public class Account {
     //TODO optional ??
     private AccountHolder secondaryOwner;
 
-
+    @CreationTimestamp
     private Instant creationDate;
+
+//    @UpdateTimestamp
+//    private Instant lastUpdate;
 
     @Enumerated(value = EnumType.STRING)
     private Status status;
@@ -49,6 +55,7 @@ public class Account {
 
     public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, Instant creationDate,
                    Status status, List<Transaction> payerTransactionList, List<Transaction> payeeTransactionList) {
+//        this.setId(UUID.randomUUID().toString());
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
@@ -58,20 +65,23 @@ public class Account {
         this.payeeTransactionList = payeeTransactionList;
     }
 
-    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, Instant creationDate,
-                   Status status) {
+    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
+//        this.setId(UUID.randomUUID().toString());
+        this.setId("a1");
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
-        this.creationDate = creationDate;
-        this.status = status;
+        this.status = Status.ACTIVE;
     }
 
-    public Account(Money balance, AccountHolder primaryOwner, Instant creationDate, Status status) {
+    public Account(Money balance, AccountHolder primaryOwner) {
+//        this.setId(UUID.randomUUID().toString());
+        this.setId("a2");
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.creationDate = creationDate;
-        this.status = status;
+        this.status = Status.ACTIVE;
     }
+
 
 }

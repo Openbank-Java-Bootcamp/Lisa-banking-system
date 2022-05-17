@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckingAccountDTO {
-
     private Money balance;
     private Integer primaryOwner;
     private Integer secondaryOwner;

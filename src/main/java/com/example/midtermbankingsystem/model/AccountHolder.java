@@ -2,6 +2,7 @@ package com.example.midtermbankingsystem.model;
 
 import com.example.midtermbankingsystem.DTO.AccountHolderDTO;
 import com.example.midtermbankingsystem.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,10 +35,12 @@ public class AccountHolder extends User {
     private Address mailingAddress;
 
     @OneToMany(mappedBy = "primaryOwner", cascade = {CascadeType.PERSIST})
+    @JsonIgnore
     private List<Account> primaryAccountList = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "secondaryOwner")
+    @JsonIgnore
     private List<Account> secondaryAccountList;
 
     public AccountHolder(String name, String password, LocalDate dateOfBirth, Address primaryAddress,

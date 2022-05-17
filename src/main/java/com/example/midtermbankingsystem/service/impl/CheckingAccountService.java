@@ -37,7 +37,7 @@ public class CheckingAccountService implements ICheckingAccountService {
         return checkingAccountList;
     }
 
-    public CheckingAccount getCheckingAccountById(String id) {
+    public CheckingAccount getCheckingAccountById(Integer id) {
         Optional<CheckingAccount> foundCheckingAccount = checkingAccountRepository.findById(id);
         if (foundCheckingAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Checking Account found with that ID");
@@ -56,7 +56,7 @@ public class CheckingAccountService implements ICheckingAccountService {
         if (checkingAccountDTO.getSecondaryOwner() == null) {
             foundAccountHolder = accountHolderRepository.findById(checkingAccountDTO.getPrimaryOwner());
             checkingAccount = CheckingAccount.fromDTOPrimaryOwner(checkingAccountDTO, foundAccountHolder.get());
-
+            log.info(Color.YELLOW_BOLD_BRIGHT + "Saving a new account {} inside of the database" + Color.RESET, checkingAccountDTO);
             foundAccountHolder.get().getPrimaryAccountList().add(checkingAccount);
             accountHolderRepository.save(foundAccountHolder.get());
 
@@ -81,8 +81,6 @@ public class CheckingAccountService implements ICheckingAccountService {
 
         log.info(Color.YELLOW_BOLD_BRIGHT + "Saving a ACCOUNT {} inside of the database" + Color.RESET, checkingAccount);
 
-
-
         try {
             return checkingAccountRepository.save(checkingAccount);
 
@@ -91,11 +89,11 @@ public class CheckingAccountService implements ICheckingAccountService {
         }
     }
 
-    public void updateCheckingAccount(String id, CheckingAccount checkingAccount) {
+    public void updateCheckingAccount(Integer id, CheckingAccount checkingAccount) {
 
     }
 
-    public void deleteCheckingAccount(String id) {
+    public void deleteCheckingAccount(Integer id) {
         Optional<CheckingAccount> foundCheckingAccount = checkingAccountRepository.findById(id);
         if (foundCheckingAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Credit Card Account found with that ID");

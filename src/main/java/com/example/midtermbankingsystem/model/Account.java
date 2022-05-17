@@ -1,16 +1,15 @@
 package com.example.midtermbankingsystem.model;
 
 import com.example.midtermbankingsystem.enums.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 
 @AllArgsConstructor
@@ -19,8 +18,10 @@ import java.util.UUID;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Account {
+
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.TABLE)
+    private Integer id;
 
     @AttributeOverride(name = "amount", column = @Column(name = "balance"))
     @AttributeOverride(name = "currency", column = @Column(name = "balance_currency"))
@@ -46,10 +47,12 @@ public class Account {
     private Status status;
 
     @OneToMany(mappedBy = "payer")
+    @JsonIgnore
     private List<Transaction> payerTransactionList;
 
 
     @OneToMany(mappedBy = "payee")
+    @JsonIgnore
     private List<Transaction> payeeTransactionList;
 
 
@@ -67,7 +70,7 @@ public class Account {
 
     public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
 //        this.setId(UUID.randomUUID().toString());
-        this.setId("a1");
+
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
@@ -76,7 +79,7 @@ public class Account {
 
     public Account(Money balance, AccountHolder primaryOwner) {
 //        this.setId(UUID.randomUUID().toString());
-        this.setId("a2");
+
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.creationDate = creationDate;

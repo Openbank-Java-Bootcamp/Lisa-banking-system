@@ -25,10 +25,9 @@ public class SavingsAccount extends Account {
             @AttributeOverride(name = "currency", column = @Column(name = "minimum_balance_currency"))
     })
     @Embedded
+    @Column(precision = 32, scale = 4)
     private Money minimumBalance;
 
-    @DecimalMax(value = "0.5", message = "Savings Account's interest rate must be below 0.5")
-    @DecimalMin(value = "0", message = "Savings Account's interest rate must be above 0")
     @Column(precision = 32, scale = 4)
     private BigDecimal interestRate;
 
@@ -51,7 +50,11 @@ public class SavingsAccount extends Account {
 
 
     public static SavingsAccount fromDTO(SavingsAccountDTO dto, AccountHolder primary) {
-        return new SavingsAccount(dto.getBalance(), primary, dto.getSecretKey(), dto.getMinimumBalance(),
-                dto.getInterestRate(), dto.getDateInterestAdded());
+
+        var interestR = dto.getInterestRate() != null ? dto.getInterestRate() : new BigDecimal(0.0025);
+        var minB = dto.getMinimumBalance() != null ? dto.getMinimumBalance() : new BigDecimal(1000);
+
+        return new SavingsAccount(new Money(dto.getBalance(), dto.getCurrency()), primary, dto.getSecretKey()
+                , new Money(minB, dto.getCurrency()), interestR, dto.getDateInterestAdded());
     }
 }

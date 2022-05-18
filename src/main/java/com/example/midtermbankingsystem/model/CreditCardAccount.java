@@ -23,10 +23,9 @@ public class CreditCardAccount extends Account {
             @AttributeOverride(name = "currency", column = @Column(name = "credit_limit_currency"))
     })
     @Embedded
+    @Column(precision = 32, scale = 4)
     private Money creditLimit;
 
-    @DecimalMax(value = "0.2", message = "Credit Card Account's interest rate must be below 0.2")
-    @DecimalMin(value = "0.1", message = "Credit Card Account's interest rate must be above 0.1")
     @Column(precision = 32, scale = 4)
     private BigDecimal interestRate;
 
@@ -48,7 +47,11 @@ public class CreditCardAccount extends Account {
 
 
     public static CreditCardAccount fromDTO(CreditCardAccountDTO dto, AccountHolder primary) {
-        return new CreditCardAccount(dto.getBalance(), primary, dto.getCreditLimit(), dto.getInterestRate()
-                , dto.getDateInterestAdded());
+
+        var interestR = dto.getInterestRate() != null ? dto.getInterestRate() : new BigDecimal(0.2);
+        var creditL = dto.getCreditLimit() != null ? dto.getCreditLimit() : new BigDecimal(100);
+
+        return new CreditCardAccount(new Money(dto.getBalance(), dto.getCurrency()), primary
+                , new Money(creditL, dto.getCurrency()), interestR, dto.getDateInterestAdded());
     }
 }

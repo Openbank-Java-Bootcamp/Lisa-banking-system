@@ -5,11 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.util.Currency;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentCheckingAccountDTO {
-    private Money balance;
+
+    private BigDecimal balance;
+    private Currency currency;
     private Integer primaryOwner;
     private Integer secondaryOwner;
     private String secretKey;

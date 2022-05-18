@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
+import java.math.BigDecimal;
+import java.util.Currency;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,6 +24,7 @@ public class CheckingAccount extends Account {
             @AttributeOverride(name = "currency", column = @Column(name = "minimum_balance_currency"))
     })
     @Embedded
+    @Column(precision = 32, scale = 4)
     private Money minimumBalance;
 
     @AttributeOverrides({
@@ -29,6 +32,7 @@ public class CheckingAccount extends Account {
             @AttributeOverride(name = "currency", column = @Column(name = "monthly_maitenance_fee_currency"))
     })
     @Embedded
+    @Column(precision = 32, scale = 4)
     private Money monthlyMaintenanceFee;
 
     public CheckingAccount(Money balance, AccountHolder primaryOwner, String secretKey, Money minimumBalance,
@@ -46,9 +50,8 @@ public class CheckingAccount extends Account {
         return checkingAccount;
     }
 
-
     public static CheckingAccount fromDTO(CheckingAccountDTO dto, AccountHolder primary) {
-        return new CheckingAccount(dto.getBalance(), primary, dto.getSecretKey(), dto.getMinimumBalance(),
-                dto.getMonthlyMaintenanceFee());
+        return new CheckingAccount(new Money(dto.getBalance(), dto.getCurrency()), primary, dto.getSecretKey()
+                , new Money(new BigDecimal(250), dto.getCurrency()), new Money(new BigDecimal(12), dto.getCurrency()));
     }
 }

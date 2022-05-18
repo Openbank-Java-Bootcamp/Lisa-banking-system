@@ -28,6 +28,6 @@ public class StudentCheckingAccount extends Account{
 
 
     public static StudentCheckingAccount fromDTO(StudentCheckingAccountDTO dto, AccountHolder primary) {
-        return new StudentCheckingAccount(dto.getBalance(), primary, dto.getSecretKey());
+        return new StudentCheckingAccount(new Money(dto.getBalance(), dto.getCurrency()), primary, dto.getSecretKey());
     }
 }

@@ -1,6 +1,9 @@
 package com.example.midtermbankingsystem.service.impl;
 
+import com.example.midtermbankingsystem.DTO.SavingsAccountDTO;
 import com.example.midtermbankingsystem.model.SavingsAccount;
+import com.example.midtermbankingsystem.model.StudentCheckingAccount;
+import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.repository.SavingsAccountRepository;
 import com.example.midtermbankingsystem.service.interfaces.ISavingsAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,10 @@ public class SavingsAccountService implements ISavingsAccountService {
 
     @Autowired
     private SavingsAccountRepository savingsAccountRepository;
+
+    @Autowired
+    private AccountHolderRepository accountHolderRepository;
+
 
     public List<SavingsAccount> getAllSavingsAccounts() {
         List<SavingsAccount> savingsAccountList = savingsAccountRepository.findAll();
@@ -34,8 +41,23 @@ public class SavingsAccountService implements ISavingsAccountService {
         }
     }
 
-    public SavingsAccount saveSavingsAccount(SavingsAccount savingsAccount) {
-        return null;
+    public SavingsAccount saveSavingsAccount(SavingsAccountDTO dto) {
+        var primaryOwner = accountHolderRepository.findById(dto.getPrimaryOwner())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with ID " + dto.getPrimaryOwner()));
+
+
+        var secondaryOwner = dto.getSecondaryOwner() != null
+                ? accountHolderRepository.findById(dto.getSecondaryOwner())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with ID " + dto.getSecondaryOwner()))
+                : null;
+
+
+        var savingsAccount = secondaryOwner != null
+                ? SavingsAccount.fromDTO(dto, primaryOwner, secondaryOwner)
+                : SavingsAccount.fromDTO(dto, primaryOwner);
+
+        try {return savingsAccountRepository.save(savingsAccount);}
+        catch(Exception e) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Savings Account");}
     }
 
     public void updateSavingsAccount(String id, SavingsAccount savingsAccount) {

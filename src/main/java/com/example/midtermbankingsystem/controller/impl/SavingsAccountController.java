@@ -1,5 +1,6 @@
 package com.example.midtermbankingsystem.controller.impl;
 
+import com.example.midtermbankingsystem.DTO.SavingsAccountDTO;
 import com.example.midtermbankingsystem.controller.interfaces.ISavingsAccountController;
 import com.example.midtermbankingsystem.model.SavingsAccount;
 import com.example.midtermbankingsystem.service.interfaces.ISavingsAccountService;
@@ -18,7 +19,7 @@ public class SavingsAccountController implements ISavingsAccountController {
 
     @PostMapping("/admin/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public SavingsAccount saveSavingsAccount(@RequestBody @Valid SavingsAccount savingsAccount) {
-        return savingsAccountService.saveSavingsAccount(savingsAccount);
+    public SavingsAccount saveSavingsAccount(@RequestBody @Valid SavingsAccountDTO savingsAccountDTO) {
+        return savingsAccountService.saveSavingsAccount(savingsAccountDTO);
     }
 }

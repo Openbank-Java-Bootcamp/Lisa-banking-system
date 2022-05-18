@@ -1,5 +1,6 @@
 package com.example.midtermbankingsystem.controller.impl;
 
+import com.example.midtermbankingsystem.DTO.CreditCardAccountDTO;
 import com.example.midtermbankingsystem.controller.interfaces.ICreditCardAccountController;
 import com.example.midtermbankingsystem.model.CreditCardAccount;
 import com.example.midtermbankingsystem.service.interfaces.ICreditCardAccountService;
@@ -18,7 +19,7 @@ public class CreditCardAccountController implements ICreditCardAccountController
 
     @PostMapping("/admin/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreditCardAccount saveCreditCardAccount(@RequestBody @Valid CreditCardAccount creditCardAccount) {
-        return creditCardAccountService.saveCreditCardAccount(creditCardAccount);
+    public CreditCardAccount saveCreditCardAccount(@RequestBody @Valid CreditCardAccountDTO creditCardAccountDTO) {
+        return creditCardAccountService.saveCreditCardAccount(creditCardAccountDTO);
     }
 }

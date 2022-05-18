@@ -1,5 +1,6 @@
 package com.example.midtermbankingsystem.controller.impl;
 
+import com.example.midtermbankingsystem.DTO.StudentCheckingAccountDTO;
 import com.example.midtermbankingsystem.controller.interfaces.IStudentCheckingAccountController;
 import com.example.midtermbankingsystem.model.StudentCheckingAccount;
 import com.example.midtermbankingsystem.service.interfaces.IStudentCheckingAccountService;
@@ -18,7 +19,7 @@ public class StudentCheckingAccountController implements IStudentCheckingAccount
 
     @PostMapping("/admin/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public StudentCheckingAccount saveStudentCheckingAccount(@RequestBody @Valid StudentCheckingAccount studentCheckingAccount) {
-        return studentCheckingAccountService.saveStudentCheckingAccount(studentCheckingAccount);
+    public StudentCheckingAccount saveStudentCheckingAccount(@RequestBody @Valid StudentCheckingAccountDTO studentCheckingAccountDTO) {
+        return studentCheckingAccountService.createStudentCheckingAccount(studentCheckingAccountDTO);
     }
 }

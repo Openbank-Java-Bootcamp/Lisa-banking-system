@@ -1,7 +1,6 @@
 package com.example.midtermbankingsystem.service.impl;
 
 import com.example.midtermbankingsystem.DTO.CheckingAccountDTO;
-import com.example.midtermbankingsystem.model.AccountHolder;
 import com.example.midtermbankingsystem.model.CheckingAccount;
 import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.repository.CheckingAccountRepository;
@@ -24,6 +23,7 @@ public class CheckingAccountService implements ICheckingAccountService {
 
     @Autowired
     private AccountHolderRepository accountHolderRepository;
+
 
     public List<CheckingAccount> getAllCheckingAccounts() {
         List<CheckingAccount> checkingAccountList = checkingAccountRepository.findAll();
@@ -58,8 +58,8 @@ public class CheckingAccountService implements ICheckingAccountService {
                 ? CheckingAccount.fromDTO(dto, primaryOwner, secondaryOwner)
                 : CheckingAccount.fromDTO(dto, primaryOwner);
 
-        return checkingAccountRepository.save(checkingAccount);
-
+        try {return checkingAccountRepository.save(checkingAccount);}
+        catch(Exception e) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Checking Account");}
     }
 
 

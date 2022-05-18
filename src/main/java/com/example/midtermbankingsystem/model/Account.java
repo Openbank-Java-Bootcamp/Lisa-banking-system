@@ -23,8 +23,10 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Integer id;
 
-    @AttributeOverride(name = "amount", column = @Column(name = "balance"))
-    @AttributeOverride(name = "currency", column = @Column(name = "balance_currency"))
+    @AttributeOverrides({
+            @AttributeOverride(name = "amount", column = @Column(name = "balance")),
+            @AttributeOverride(name = "currency", column = @Column(name = "balance_currency"))
+    })
     @Embedded
     private Money balance;
 

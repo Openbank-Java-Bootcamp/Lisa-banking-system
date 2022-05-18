@@ -1,0 +1,16 @@
+package com.example.midtermbankingsystem.DTO;
+
+import com.example.midtermbankingsystem.model.Money;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class StudentCheckingAccountDTO {
+    private Money balance;
+    private Integer primaryOwner;
+    private Integer secondaryOwner;
+    private String secretKey;
+}

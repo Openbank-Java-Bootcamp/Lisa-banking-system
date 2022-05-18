@@ -2,7 +2,6 @@ package com.example.midtermbankingsystem.service.impl;
 
 import com.example.midtermbankingsystem.DTO.CreditCardAccountDTO;
 import com.example.midtermbankingsystem.model.CreditCardAccount;
-import com.example.midtermbankingsystem.model.SavingsAccount;
 import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.repository.CreditCardAccountRepository;
 import com.example.midtermbankingsystem.service.interfaces.ICreditCardAccountService;

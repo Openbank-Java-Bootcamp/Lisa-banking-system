@@ -17,6 +17,7 @@ import java.util.List;
 @Data
 @Entity
 public class AccountHolder extends User {
+
     private LocalDate dateOfBirth;
 
     //private final Role role = Role.ACCOUNT_HOLDER;

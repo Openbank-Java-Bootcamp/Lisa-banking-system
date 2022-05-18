@@ -48,31 +48,16 @@ public class Account {
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "payer")
+    @OneToMany(mappedBy = "payerAcc")
     @JsonIgnore
     private List<Transaction> payerTransactionList;
 
 
-    @OneToMany(mappedBy = "payee")
+    @OneToMany(mappedBy = "targetAcc")
     @JsonIgnore
-    private List<Transaction> payeeTransactionList;
-
-
-    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, Instant creationDate,
-                   Status status, List<Transaction> payerTransactionList, List<Transaction> payeeTransactionList) {
-//        this.setId(UUID.randomUUID().toString());
-        this.balance = balance;
-        this.primaryOwner = primaryOwner;
-        this.secondaryOwner = secondaryOwner;
-        this.creationDate = creationDate;
-        this.status = status;
-        this.payerTransactionList = payerTransactionList;
-        this.payeeTransactionList = payeeTransactionList;
-    }
+    private List<Transaction> targetTransactionList;
 
     public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
-//        this.setId(UUID.randomUUID().toString());
-
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
@@ -80,11 +65,8 @@ public class Account {
     }
 
     public Account(Money balance, AccountHolder primaryOwner) {
-//        this.setId(UUID.randomUUID().toString());
-
         this.balance = balance;
         this.primaryOwner = primaryOwner;
-        this.creationDate = creationDate;
         this.status = Status.ACTIVE;
     }
 

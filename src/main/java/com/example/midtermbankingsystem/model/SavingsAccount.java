@@ -5,12 +5,14 @@ import com.example.midtermbankingsystem.DTO.StudentCheckingAccountDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,15 +33,15 @@ public class SavingsAccount extends Account {
     @Column(precision = 32, scale = 4)
     private BigDecimal interestRate;
 
-    private Instant dateInterestAdded;
+    @CreationTimestamp
+    private LocalDate dateInterestAdded;
 
     public SavingsAccount(Money balance, AccountHolder primaryOwner, String secretKey, Money minimumBalance,
-                          BigDecimal interestRate, Instant dateInterestAdded) {
+                          BigDecimal interestRate) {
         super(balance, primaryOwner);
         this.secretKey = secretKey;
         this.minimumBalance = minimumBalance;
         this.interestRate = interestRate;
-        this.dateInterestAdded = dateInterestAdded;
     }
 
     public static SavingsAccount fromDTO(SavingsAccountDTO dto, AccountHolder primary, AccountHolder secondary) {
@@ -55,6 +57,6 @@ public class SavingsAccount extends Account {
         var minB = dto.getMinimumBalance() != null ? dto.getMinimumBalance() : new BigDecimal(1000);
 
         return new SavingsAccount(new Money(dto.getBalance(), dto.getCurrency()), primary, dto.getSecretKey()
-                , new Money(minB, dto.getCurrency()), interestR, dto.getDateInterestAdded());
+                , new Money(minB, dto.getCurrency()), interestR);
     }
 }

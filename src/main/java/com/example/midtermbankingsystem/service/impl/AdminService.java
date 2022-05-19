@@ -48,7 +48,7 @@ public class AdminService implements IAdminService {
         admin.setPassword(passwordEncoder.encode(adminDTO.getPassword()));
 
         try {
-            log.info(Color.YELLOW_BOLD_BRIGHT+"Saving a new admin {} inside of the database"+Color.RESET, adminDTO.getName());
+            //log.info(Color.YELLOW_BOLD_BRIGHT+"Saving a new admin {} in the database"+Color.RESET, adminDTO.getName());
             return adminRepository.save(admin);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Admin");

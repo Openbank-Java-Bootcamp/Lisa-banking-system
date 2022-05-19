@@ -23,8 +23,4 @@ public class AdminController implements IAdminController {
         return adminService.saveAdmin(adminDTO);
     }
 
-    @GetMapping("/hello")
-    public String hello(){
-        return "Hello from Admin";
-    }
 }

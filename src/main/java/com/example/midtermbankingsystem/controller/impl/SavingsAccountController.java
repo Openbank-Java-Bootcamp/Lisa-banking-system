@@ -22,4 +22,10 @@ public class SavingsAccountController implements ISavingsAccountController {
     public SavingsAccount saveSavingsAccount(@RequestBody @Valid SavingsAccountDTO savingsAccountDTO) {
         return savingsAccountService.saveSavingsAccount(savingsAccountDTO);
     }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public SavingsAccount getSavingsAccountById(@PathVariable Integer id) {
+        return savingsAccountService.getSavingsAccountById(id);
+    }
 }

@@ -31,7 +31,7 @@ public class StudentCheckingAccountService implements IStudentCheckingAccountSer
         return studentCheckingAccountList;
     }
 
-    public StudentCheckingAccount getStudentCheckingAccountById(String id) {
+    public StudentCheckingAccount getStudentCheckingAccountById(Integer id) {
         Optional<StudentCheckingAccount> foundStudentCheckingAccount = studentCheckingAccountRepository.findById(id);
         if (foundStudentCheckingAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Student Checking Account found with that ID");
@@ -59,11 +59,11 @@ public class StudentCheckingAccountService implements IStudentCheckingAccountSer
         catch(Exception e) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Student Checking Account");}
     }
 
-    public void updateStudentCheckingAccount(String id, StudentCheckingAccount studentCheckingAccount) {
+    public void updateStudentCheckingAccount(Integer id, StudentCheckingAccount studentCheckingAccount) {
 
     }
 
-    public void deleteStudentCheckingAccount(String id) {
+    public void deleteStudentCheckingAccount(Integer id) {
         Optional<StudentCheckingAccount> foundStudentCheckingAccount = studentCheckingAccountRepository.findById(id);
         if (foundStudentCheckingAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Student Checking Account found with that ID");

@@ -4,11 +4,14 @@ package com.example.midtermbankingsystem.service.impl;
 import com.example.midtermbankingsystem.DTO.TransactionDTO;
 import com.example.midtermbankingsystem.enums.Status;
 import com.example.midtermbankingsystem.model.Account;
+import com.example.midtermbankingsystem.model.CreditCardAccount;
 import com.example.midtermbankingsystem.model.Money;
 import com.example.midtermbankingsystem.model.Transaction;
 import com.example.midtermbankingsystem.repository.AccountRepository;
 import com.example.midtermbankingsystem.repository.TransactionRepository;
 import com.example.midtermbankingsystem.service.interfaces.ITransactionService;
+import com.example.midtermbankingsystem.utils.Color;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class TransactionService implements ITransactionService {
 
@@ -49,7 +53,7 @@ public class TransactionService implements ITransactionService {
 
         validateTransaction(transaction, payerAccount, targetAccount);
         applyTransaction(transaction.getAmount().getAmount(), payerAccount, targetAccount);
-
+        applyPenaltyFee(payerAccount, targetAccount);
 
         try {
             return transactionRepository.save(transaction);
@@ -95,19 +99,16 @@ public class TransactionService implements ITransactionService {
     private void validateTargetName(Transaction transaction, Optional<Account> target) {
 
         String transactionTargetName = transaction.getTargetName();
-        String targetPrimaryName = target.get().getPrimaryOwner().getName();
+
+        var targetPrimaryName = target.get().getPrimaryOwner().getName();
 
         //in case we don't have a secondary name
         var targetSecondaryName = target.get().getSecondaryOwner()!=null
                 ? target.get().getSecondaryOwner().getName() : null;
 
-        boolean isPrimaryValid= !targetPrimaryName.equals(transactionTargetName);
 
-        //TODO cant check equals if its null
-        boolean isSecondaryValid = !targetSecondaryName.equals(transactionTargetName);
-
-
-        if (targetSecondaryName == null ? isPrimaryValid: isPrimaryValid && isSecondaryValid) {
+        if (targetSecondaryName == null ? !targetPrimaryName.equals(transactionTargetName) :
+                !targetPrimaryName.equals(transactionTargetName) && !targetSecondaryName.equals(transactionTargetName)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                     , "Transaction failed, invalid Target Name");
         }
@@ -130,6 +131,17 @@ public class TransactionService implements ITransactionService {
     }
 
 
+    public void applyPenaltyFee(Optional<Account> payer, Optional<Account> target){
+        log.info(Color.YELLOW_BOLD_BRIGHT+"QUE CLASE ERES PAYER: {}"+Color.RESET
+                , payer.get().getClass());
+
+        var accountType = payer.get().getClass();
+//com.example.midtermbankingsystem.model.StudentCheckingAccount
+
+
+    }
+
+
     public void updateTransaction(Integer id, Transaction transaction) {
 
     }
@@ -137,4 +149,6 @@ public class TransactionService implements ITransactionService {
     public void deleteTransaction(Integer id) {
 
     }
+
+
 }

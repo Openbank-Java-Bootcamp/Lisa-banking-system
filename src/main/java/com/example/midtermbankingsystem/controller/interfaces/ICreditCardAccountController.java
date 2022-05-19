@@ -5,5 +5,5 @@ import com.example.midtermbankingsystem.model.CreditCardAccount;
 
 public interface ICreditCardAccountController {
     CreditCardAccount saveCreditCardAccount(CreditCardAccountDTO creditCardAccountDTO);
-
+    CreditCardAccount getCreditCardAccountById(Integer id);
 }

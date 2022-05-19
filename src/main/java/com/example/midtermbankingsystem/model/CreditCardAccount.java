@@ -5,12 +5,11 @@ import com.example.midtermbankingsystem.DTO.StudentCheckingAccountDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,14 +28,13 @@ public class CreditCardAccount extends Account {
     @Column(precision = 32, scale = 4)
     private BigDecimal interestRate;
 
-    private Instant dateInterestAdded;
+    @CreationTimestamp
+    private LocalDate dateInterestAdded;
 
-    public CreditCardAccount(Money balance, AccountHolder primaryOwner, Money creditLimit, BigDecimal interestRate
-            , Instant dateInterestAdded) {
+    public CreditCardAccount(Money balance, AccountHolder primaryOwner, Money creditLimit, BigDecimal interestRate){
         super(balance, primaryOwner);
         this.creditLimit = creditLimit;
         this.interestRate = interestRate;
-        this.dateInterestAdded = dateInterestAdded;
     }
 
     public static CreditCardAccount fromDTO(CreditCardAccountDTO dto, AccountHolder primary, AccountHolder secondary) {
@@ -52,6 +50,6 @@ public class CreditCardAccount extends Account {
         var creditL = dto.getCreditLimit() != null ? dto.getCreditLimit() : new BigDecimal(100);
 
         return new CreditCardAccount(new Money(dto.getBalance(), dto.getCurrency()), primary
-                , new Money(creditL, dto.getCurrency()), interestR, dto.getDateInterestAdded());
+                , new Money(creditL, dto.getCurrency()), interestR);
     }
 }

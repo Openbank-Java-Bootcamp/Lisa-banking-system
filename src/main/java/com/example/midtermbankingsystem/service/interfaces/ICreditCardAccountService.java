@@ -7,8 +7,9 @@ import java.util.List;
 
 public interface ICreditCardAccountService {
     List<CreditCardAccount> getAllCreditCardAccounts();
-    CreditCardAccount getCreditCardAccountById(String id);
+    CreditCardAccount getCreditCardAccountById(Integer id);
     CreditCardAccount saveCreditCardAccount(CreditCardAccountDTO creditCardAccountDTO);
-    void updateCreditCardAccount(String id, CreditCardAccount creditCardAccount);
-    void deleteCreditCardAccount(String id);
+    void addInterest(CreditCardAccount creditCardAccount);
+    void updateCreditCardAccount(Integer id, CreditCardAccount creditCardAccount);
+    void deleteCreditCardAccount(Integer id);
 }

@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface IStudentCheckingAccountService {
     List<StudentCheckingAccount> getAllStudentCheckingAccounts();
-    StudentCheckingAccount getStudentCheckingAccountById(String id);
+    StudentCheckingAccount getStudentCheckingAccountById(Integer id);
     StudentCheckingAccount createStudentCheckingAccount(StudentCheckingAccountDTO studentCheckingAccountDTO);
-    void updateStudentCheckingAccount(String id, StudentCheckingAccount studentCheckingAccount);
-    void deleteStudentCheckingAccount(String id);
+    void updateStudentCheckingAccount(Integer id, StudentCheckingAccount studentCheckingAccount);
+    void deleteStudentCheckingAccount(Integer id);
 }

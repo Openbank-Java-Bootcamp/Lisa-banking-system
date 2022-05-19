@@ -1,19 +1,27 @@
 package com.example.midtermbankingsystem.service.impl;
 
 import com.example.midtermbankingsystem.DTO.SavingsAccountDTO;
+import com.example.midtermbankingsystem.model.Money;
 import com.example.midtermbankingsystem.model.SavingsAccount;
-import com.example.midtermbankingsystem.model.StudentCheckingAccount;
 import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.repository.SavingsAccountRepository;
 import com.example.midtermbankingsystem.service.interfaces.ISavingsAccountService;
+import com.example.midtermbankingsystem.utils.Color;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class SavingsAccountService implements ISavingsAccountService {
 
@@ -32,11 +40,12 @@ public class SavingsAccountService implements ISavingsAccountService {
         return savingsAccountList;
     }
 
-    public SavingsAccount getSavingsAccountById(String id) {
+    public SavingsAccount getSavingsAccountById(Integer id) {
         Optional<SavingsAccount> foundSavingsAccount = savingsAccountRepository.findById(id);
         if (foundSavingsAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Savings Account found with that ID");
         } else {
+            addInterest(foundSavingsAccount.get());
             return foundSavingsAccount.get();
         }
     }
@@ -56,15 +65,42 @@ public class SavingsAccountService implements ISavingsAccountService {
                 ? SavingsAccount.fromDTO(dto, primaryOwner, secondaryOwner)
                 : SavingsAccount.fromDTO(dto, primaryOwner);
 
+//        savingsAccount.setDateInterestAdded(savingsAccount.getCreationDate());
+
         try {return savingsAccountRepository.save(savingsAccount);}
         catch(Exception e) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Savings Account");}
     }
 
-    public void updateSavingsAccount(String id, SavingsAccount savingsAccount) {
+    public void updateSavingsAccount(Integer id, SavingsAccount savingsAccount) {
 
     }
 
-    public void deleteSavingsAccount(String id) {
+    public void addInterest(SavingsAccount savingsAccount){
+
+        LocalDate today = LocalDate.now();
+        Period interestAddedDate = Period.between(savingsAccount.getDateInterestAdded(), today);
+
+        log.info(Color.YELLOW_BOLD_BRIGHT+"Years passed since last interest rate added: {}"+Color.RESET
+                , interestAddedDate.getYears());
+
+       if(interestAddedDate.getYears() >= 1) {
+           //add interest to balance multiplied by years passed since last interest was added, update interest added date
+           var balance = savingsAccount.getBalance().getAmount();
+           var interest = balance.multiply(savingsAccount.getInterestRate()).multiply(BigDecimal.valueOf(interestAddedDate.getYears()));
+
+           savingsAccount.setBalance(new Money(balance.add(interest), savingsAccount.getBalance().getCurrency()));
+           savingsAccount.setDateInterestAdded(today);
+
+           log.info(Color.YELLOW_BOLD_BRIGHT+"Adding yearly interest of {} to Savings Account with ID {}"+Color.RESET
+                   , interest.setScale(1, RoundingMode.HALF_UP), savingsAccount.getId());
+
+           try {savingsAccountRepository.save(savingsAccount);}
+           catch(Exception e) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Savings Account");}
+       }
+
+    }
+
+    public void deleteSavingsAccount(Integer id) {
         Optional<SavingsAccount> foundSavingsAccount = savingsAccountRepository.findById(id);
         if (foundSavingsAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Savings Account found with that ID");

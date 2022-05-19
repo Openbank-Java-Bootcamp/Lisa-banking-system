@@ -28,6 +28,4 @@ public class CreditCardAccountDTO {
     @DecimalMax(value = "0.2", message = "Credit Card Account's interest rate must be below 0.2")
     @DecimalMin(value = "0.1", message = "Credit Card Account's interest rate must be above 0.1")
     private BigDecimal interestRate;
-
-    private Instant dateInterestAdded;
 }

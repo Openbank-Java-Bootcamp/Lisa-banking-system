@@ -7,8 +7,9 @@ import java.util.List;
 
 public interface ISavingsAccountService {
     List<SavingsAccount> getAllSavingsAccounts();
-    SavingsAccount getSavingsAccountById(String id);
+    SavingsAccount getSavingsAccountById(Integer id);
     SavingsAccount saveSavingsAccount(SavingsAccountDTO savingsAccountDTO);
-    void updateSavingsAccount(String id, SavingsAccount savingsAccount);
-    void deleteSavingsAccount(String id);
+    void addInterest(SavingsAccount savingsAccount);
+    void updateSavingsAccount(Integer id, SavingsAccount savingsAccount);
+    void deleteSavingsAccount(Integer id);
 }

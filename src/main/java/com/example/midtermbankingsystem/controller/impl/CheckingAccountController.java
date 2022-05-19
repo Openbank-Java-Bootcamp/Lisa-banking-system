@@ -40,10 +40,8 @@ public class CheckingAccountController implements ICheckingAccountController {
         LocalDate today = LocalDate.now();
         Period period = Period.between(primaryOwner.getDateOfBirth(), today);
 
-        Account account = period.getYears() < 24
+        return period.getYears() < 24
                 ? studentCheckingAccountService.createStudentCheckingAccount(StudentCheckingAccountDTO.fromCheckingDTO(dto))
                 : checkingAccountService.createCheckingAccount(dto);
-
-        return account;
     }
 }

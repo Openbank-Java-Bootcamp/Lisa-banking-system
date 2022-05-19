@@ -32,6 +32,4 @@ public class SavingsAccountDTO {
     @DecimalMin(value = "0", message = "Savings Account's interest rate must be above 0")
     @Column(precision = 32, scale = 4)
     private BigDecimal interestRate;
-
-    private Instant dateInterestAdded;
 }

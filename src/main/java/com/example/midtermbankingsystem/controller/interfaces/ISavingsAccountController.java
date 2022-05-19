@@ -5,5 +5,5 @@ import com.example.midtermbankingsystem.model.SavingsAccount;
 
 public interface ISavingsAccountController {
     SavingsAccount saveSavingsAccount(SavingsAccountDTO savingsAccountDTO);
-
+    SavingsAccount getSavingsAccountById(Integer id);
 }

@@ -4,7 +4,6 @@ import com.example.midtermbankingsystem.DTO.ThirdPartyDTO;
 import com.example.midtermbankingsystem.model.ThirdParty;
 import com.example.midtermbankingsystem.repository.ThirdPartyRepository;
 import com.example.midtermbankingsystem.service.interfaces.IThirdPartyService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;

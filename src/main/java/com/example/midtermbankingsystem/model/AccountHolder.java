@@ -44,16 +44,16 @@ public class AccountHolder extends User {
     @JsonIgnore
     private List<Account> secondaryAccountList;
 
-    public AccountHolder(String name, String password, LocalDate dateOfBirth, Address primaryAddress,
+    public AccountHolder(String name, String password, String username, LocalDate dateOfBirth, Address primaryAddress,
                          Address mailingAddress) {
-        super(name, password, Role.ACCOUNT_HOLDER);
+        super(name, password, Role.ACCOUNT_HOLDER, username);
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = mailingAddress;
     }
 
     public static AccountHolder fromDTO(AccountHolderDTO dto) {
-        return new AccountHolder(dto.getName(), dto.getPassword(), dto.getDateOfBirth(), dto.getPrimaryAddress(),
+        return new AccountHolder(dto.getName(), dto.getPassword(), dto.getUsername(), dto.getDateOfBirth(), dto.getPrimaryAddress(),
                 dto.getMailingAddress());
     }
 }

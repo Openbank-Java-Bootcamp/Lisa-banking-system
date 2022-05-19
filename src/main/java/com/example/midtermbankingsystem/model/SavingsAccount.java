@@ -1,17 +1,13 @@
 package com.example.midtermbankingsystem.model;
 
 import com.example.midtermbankingsystem.DTO.SavingsAccountDTO;
-import com.example.midtermbankingsystem.DTO.StudentCheckingAccountDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 
 @AllArgsConstructor

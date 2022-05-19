@@ -4,16 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Currency;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckingAccountDTO {
+public class AccountBalanceDTO {
+    @NotNull(message = "New Account Balance must be specified")
     private BigDecimal balance;
-    private Currency currency;
-    private Integer primaryOwner;
-    private Integer secondaryOwner;
-    private String secretKey;
 }

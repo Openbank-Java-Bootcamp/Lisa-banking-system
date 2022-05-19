@@ -64,35 +64,43 @@ public class CreditCardAccountService implements ICreditCardAccountService {
                 ? CreditCardAccount.fromDTO(dto, primaryOwner, secondaryOwner)
                 : CreditCardAccount.fromDTO(dto, primaryOwner);
 
-        try {return creditCardAccountRepository.save(creditCardAccount);}
-        catch(Exception e) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Credit Card Account");}
+        try {
+            return creditCardAccountRepository.save(creditCardAccount);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Credit Card Account");
+        }
     }
 
     public void updateCreditCardAccount(Integer id, CreditCardAccount creditCardAccount) {
 
     }
 
-    public void addInterest(CreditCardAccount creditCardAccount){
+    public void addInterest(CreditCardAccount creditCardAccount) {
 
         LocalDate today = LocalDate.now();
         Period interestAddedDate = Period.between(creditCardAccount.getDateInterestAdded(), today);
 
-        log.info(Color.YELLOW_BOLD_BRIGHT+"Months passed since last interest rate added: {}"+Color.RESET
-                , interestAddedDate.getMonths());
 
-        if(interestAddedDate.getMonths() >= 1) {
+        if (interestAddedDate.getMonths() >= 1) {
             //add interest to balance multiplied by months passed since last interest was added, update interest added date
+
+            log.info(Color.YELLOW_BOLD_BRIGHT + "Months passed since last interest rate added: {}" + Color.RESET
+                    , interestAddedDate.getMonths());
+
             var balance = creditCardAccount.getBalance().getAmount();
             var interest = balance.multiply(creditCardAccount.getInterestRate()).multiply(BigDecimal.valueOf(interestAddedDate.getMonths()));
 
             creditCardAccount.setBalance(new Money(balance.add(interest), creditCardAccount.getBalance().getCurrency()));
             creditCardAccount.setDateInterestAdded(today);
 
-            log.info(Color.YELLOW_BOLD_BRIGHT+"Adding monthly interest of {} to Credit Card Account with ID {}"+Color.RESET
+            log.info(Color.YELLOW_BOLD_BRIGHT + "Adding monthly interest of {} to Credit Card Account with ID {}" + Color.RESET
                     , interest.setScale(1, RoundingMode.HALF_UP), creditCardAccount.getId());
 
-            try {creditCardAccountRepository.save(creditCardAccount);}
-            catch(Exception e) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Credit Card Account");}
+            try {
+                creditCardAccountRepository.save(creditCardAccount);
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Credit Card Account");
+            }
         }
 
     }

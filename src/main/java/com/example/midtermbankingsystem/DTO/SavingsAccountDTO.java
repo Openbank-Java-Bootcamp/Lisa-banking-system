@@ -1,6 +1,5 @@
 package com.example.midtermbankingsystem.DTO;
 
-import com.example.midtermbankingsystem.model.Money;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,6 @@ import javax.persistence.Column;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Currency;
 
 @Data

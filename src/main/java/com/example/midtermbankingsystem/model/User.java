@@ -23,6 +23,8 @@ public class User {
 
     private String name;
 
+    private String username;
+
     private String password;
 
     @Enumerated(value = EnumType.STRING)
@@ -35,9 +37,10 @@ public class User {
     private Instant lastUpdate;
 
 
-    public User(String name, String password, Role role) {
+    public User(String name, String password, Role role, String username) {
         this.name = name;
         this.password = password;
         this.role = role;
+        this.username = username;
     }
 }

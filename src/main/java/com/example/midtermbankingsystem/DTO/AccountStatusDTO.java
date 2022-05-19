@@ -4,11 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminDTO {
-    private String name;
-    private String username;
-    private String password;
+public class AccountStatusDTO {
+//    @NotNull(message = "Account status must be specified")
+    private String status;
 }

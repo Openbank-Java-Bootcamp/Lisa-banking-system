@@ -23,6 +23,5 @@ public class TransactionDTO {
     private Integer targetAccId;
     @NotNull(message = "Transaction Target Account Holder Name must be specified")
     private String targetName;
-
     private String subject;
 }

@@ -3,7 +3,6 @@ package com.example.midtermbankingsystem.controller.impl;
 import com.example.midtermbankingsystem.DTO.CreditCardAccountDTO;
 import com.example.midtermbankingsystem.controller.interfaces.ICreditCardAccountController;
 import com.example.midtermbankingsystem.model.CreditCardAccount;
-import com.example.midtermbankingsystem.model.SavingsAccount;
 import com.example.midtermbankingsystem.service.interfaces.ICreditCardAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

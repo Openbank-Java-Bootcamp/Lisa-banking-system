@@ -3,7 +3,6 @@ package com.example.midtermbankingsystem.controller.impl;
 import com.example.midtermbankingsystem.DTO.AccountHolderDTO;
 import com.example.midtermbankingsystem.controller.interfaces.IAccountHolderController;
 import com.example.midtermbankingsystem.model.AccountHolder;
-import com.example.midtermbankingsystem.model.Address;
 import com.example.midtermbankingsystem.service.interfaces.IAccountHolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

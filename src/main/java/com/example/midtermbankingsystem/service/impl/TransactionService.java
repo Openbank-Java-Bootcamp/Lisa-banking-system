@@ -4,10 +4,11 @@ package com.example.midtermbankingsystem.service.impl;
 import com.example.midtermbankingsystem.DTO.TransactionDTO;
 import com.example.midtermbankingsystem.enums.Status;
 import com.example.midtermbankingsystem.model.Account;
-import com.example.midtermbankingsystem.model.CreditCardAccount;
 import com.example.midtermbankingsystem.model.Money;
 import com.example.midtermbankingsystem.model.Transaction;
 import com.example.midtermbankingsystem.repository.AccountRepository;
+import com.example.midtermbankingsystem.repository.CheckingAccountRepository;
+import com.example.midtermbankingsystem.repository.SavingsAccountRepository;
 import com.example.midtermbankingsystem.repository.TransactionRepository;
 import com.example.midtermbankingsystem.service.interfaces.ITransactionService;
 import com.example.midtermbankingsystem.utils.Color;
@@ -31,6 +32,18 @@ public class TransactionService implements ITransactionService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private SavingsAccountRepository savingsAccountRepository;
+
+    @Autowired
+    private CheckingAccountRepository checkingAccountRepository;
+
+    @Autowired
+    private SavingsAccountService savingsAccountService;
+
+    @Autowired
+    private CheckingAccountService checkingAccountService;
+
 
     public List<Transaction> getAllTransactions() {
         return null;
@@ -51,9 +64,9 @@ public class TransactionService implements ITransactionService {
                 , "Payer or Target Account must be in our banking system");
 
 
+        applyPenaltyFee(payerAccount, targetAccount);
         validateTransaction(transaction, payerAccount, targetAccount);
         applyTransaction(transaction.getAmount().getAmount(), payerAccount, targetAccount);
-        applyPenaltyFee(payerAccount, targetAccount);
 
         try {
             return transactionRepository.save(transaction);
@@ -83,7 +96,7 @@ public class TransactionService implements ITransactionService {
 
     private void validateAccountStatus(Optional<Account> account) {
         //validating account isn't frozen
-        if(account.get().getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+        if (account.get().getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                 , "Transaction failed, Payer Account is frozen");
     }
 
@@ -103,12 +116,12 @@ public class TransactionService implements ITransactionService {
         var targetPrimaryName = target.get().getPrimaryOwner().getName();
 
         //in case we don't have a secondary name
-        var targetSecondaryName = target.get().getSecondaryOwner()!=null
+        var targetSecondaryName = target.get().getSecondaryOwner() != null
                 ? target.get().getSecondaryOwner().getName() : null;
 
 
         if (targetSecondaryName == null ? !targetPrimaryName.equals(transactionTargetName) :
-                !targetPrimaryName.equals(transactionTargetName) && !targetSecondaryName.equals(transactionTargetName)){
+                !targetPrimaryName.equals(transactionTargetName) && !targetSecondaryName.equals(transactionTargetName)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                     , "Transaction failed, invalid Target Name");
         }
@@ -131,14 +144,46 @@ public class TransactionService implements ITransactionService {
     }
 
 
-    public void applyPenaltyFee(Optional<Account> payer, Optional<Account> target){
-        log.info(Color.YELLOW_BOLD_BRIGHT+"QUE CLASE ERES PAYER: {}"+Color.RESET
-                , payer.get().getClass());
+    public void applyPenaltyFee(Optional<Account> payer, Optional<Account> target) {
+        if (payer.isPresent()) findMinimumBalanceAndApplyFee(payer);
+        if (target.isPresent()) findMinimumBalanceAndApplyFee(target);
+    }
 
-        var accountType = payer.get().getClass();
-//com.example.midtermbankingsystem.model.StudentCheckingAccount
+    private void findMinimumBalanceAndApplyFee(Optional<Account> account) {
+
+        String accountType = account.get().getClass().toString();
+
+        var balance = account.get().getBalance().getAmount();
+        var currency = account.get().getBalance().getCurrency();
 
 
+        if (accountType.contains(".SavingsAccount")) {
+            var targetSavingsAcc = savingsAccountService.getSavingsAccountById(account.get().getId());
+
+            if (targetSavingsAcc.getBalance().getAmount().compareTo(targetSavingsAcc.getMinimumBalance().getAmount()) == -1) {
+
+                targetSavingsAcc.setBalance(new Money(balance.subtract(new BigDecimal(40)), currency));
+
+                savingsAccountRepository.save(targetSavingsAcc);
+
+                log.info(Color.YELLOW_BOLD_BRIGHT + "Savings Account balance: {} below minimum balance : {} Applying Penalty Fee"
+                                + Color.RESET, balance, targetSavingsAcc.getMinimumBalance().getAmount());
+
+            }
+
+        } else if (accountType.contains(".CheckingAccount")) {
+            var targetCheckingAcc = checkingAccountService.getCheckingAccountById(account.get().getId());
+
+            if (targetCheckingAcc.getBalance().getAmount().compareTo(targetCheckingAcc.getMinimumBalance().getAmount()) == -1) {
+
+                targetCheckingAcc.setBalance(new Money(balance.subtract(new BigDecimal(40)), currency));
+
+                checkingAccountRepository.save(targetCheckingAcc);
+
+                log.info(Color.YELLOW_BOLD_BRIGHT + "Checking Account balance: {} below minimum balance : {} Applying Penalty Fee"
+                        + Color.RESET, balance, targetCheckingAcc.getMinimumBalance().getAmount());
+            }
+        }
     }
 
 

@@ -15,7 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -65,7 +64,6 @@ public class SavingsAccountService implements ISavingsAccountService {
                 ? SavingsAccount.fromDTO(dto, primaryOwner, secondaryOwner)
                 : SavingsAccount.fromDTO(dto, primaryOwner);
 
-//        savingsAccount.setDateInterestAdded(savingsAccount.getCreationDate());
 
         try {return savingsAccountRepository.save(savingsAccount);}
         catch(Exception e) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Savings Account");}
@@ -80,23 +78,25 @@ public class SavingsAccountService implements ISavingsAccountService {
         LocalDate today = LocalDate.now();
         Period interestAddedDate = Period.between(savingsAccount.getDateInterestAdded(), today);
 
-        log.info(Color.YELLOW_BOLD_BRIGHT+"Years passed since last interest rate added: {}"+Color.RESET
-                , interestAddedDate.getYears());
+        if(interestAddedDate.getYears() >= 1) {
+            //add interest to balance multiplied by years passed since last interest was added, update interest added date
 
-       if(interestAddedDate.getYears() >= 1) {
-           //add interest to balance multiplied by years passed since last interest was added, update interest added date
-           var balance = savingsAccount.getBalance().getAmount();
-           var interest = balance.multiply(savingsAccount.getInterestRate()).multiply(BigDecimal.valueOf(interestAddedDate.getYears()));
+            log.info(Color.YELLOW_BOLD_BRIGHT+"Years passed since last interest rate added: {}"+Color.RESET
+                    , interestAddedDate.getYears());
 
-           savingsAccount.setBalance(new Money(balance.add(interest), savingsAccount.getBalance().getCurrency()));
-           savingsAccount.setDateInterestAdded(today);
+            var balance = savingsAccount.getBalance().getAmount();
+            var interest = balance.multiply(savingsAccount.getInterestRate()).multiply(BigDecimal.valueOf(interestAddedDate.getYears()));
 
-           log.info(Color.YELLOW_BOLD_BRIGHT+"Adding yearly interest of {} to Savings Account with ID {}"+Color.RESET
-                   , interest.setScale(1, RoundingMode.HALF_UP), savingsAccount.getId());
+            savingsAccount.setBalance(new Money(balance.add(interest), savingsAccount.getBalance().getCurrency()));
+            savingsAccount.setDateInterestAdded(today);
 
-           try {savingsAccountRepository.save(savingsAccount);}
-           catch(Exception e) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Savings Account");}
-       }
+            log.info(Color.YELLOW_BOLD_BRIGHT+"Adding yearly interest of {} to Savings Account with ID {}"+Color.RESET
+                    , interest.setScale(1, RoundingMode.HALF_UP), savingsAccount.getId());
+
+            try {savingsAccountRepository.save(savingsAccount);}
+            catch(Exception e) {throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed Savings Account");}
+        }
+
 
     }
 

@@ -1,7 +1,6 @@
 package com.example.midtermbankingsystem.model;
 
 import com.example.midtermbankingsystem.DTO.CreditCardAccountDTO;
-import com.example.midtermbankingsystem.DTO.StudentCheckingAccountDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

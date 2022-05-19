@@ -2,17 +2,14 @@ package com.example.midtermbankingsystem.service.impl;
 
 import com.example.midtermbankingsystem.DTO.AccountHolderDTO;
 import com.example.midtermbankingsystem.model.AccountHolder;
-import com.example.midtermbankingsystem.model.Address;
 import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.service.interfaces.IAccountHolderService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 

@@ -36,7 +36,6 @@ public class Account {
 
     @ManyToOne
     @JoinColumn(name = "secondary_owner")
-    //TODO optional ??
     private AccountHolder secondaryOwner;
 
     @CreationTimestamp

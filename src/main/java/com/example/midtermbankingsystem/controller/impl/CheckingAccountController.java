@@ -7,7 +7,6 @@ import com.example.midtermbankingsystem.model.Account;
 import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.service.interfaces.ICheckingAccountService;
 import com.example.midtermbankingsystem.service.interfaces.IStudentCheckingAccountService;
-import com.example.midtermbankingsystem.utils.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

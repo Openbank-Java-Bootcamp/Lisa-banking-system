@@ -6,10 +6,7 @@ import com.example.midtermbankingsystem.enums.Status;
 import com.example.midtermbankingsystem.model.Account;
 import com.example.midtermbankingsystem.model.Money;
 import com.example.midtermbankingsystem.model.Transaction;
-import com.example.midtermbankingsystem.repository.AccountRepository;
-import com.example.midtermbankingsystem.repository.CheckingAccountRepository;
-import com.example.midtermbankingsystem.repository.SavingsAccountRepository;
-import com.example.midtermbankingsystem.repository.TransactionRepository;
+import com.example.midtermbankingsystem.repository.*;
 import com.example.midtermbankingsystem.service.interfaces.ITransactionService;
 import com.example.midtermbankingsystem.utils.Color;
 import com.example.midtermbankingsystem.utils.Utils;
@@ -46,6 +43,9 @@ public class TransactionService implements ITransactionService {
     private CheckingAccountService checkingAccountService;
 
     @Autowired
+    private ThirdPartyRepository thirdPartyRepository;
+
+    @Autowired
     private Utils utils;
 
 
@@ -80,7 +80,13 @@ public class TransactionService implements ITransactionService {
 
     }
 
-    public void validateTransaction(Transaction transaction, Optional<Account> payer, Optional<Account> target) {
+    //TODO check hashed key in headers, pass thirdParty username (to check)
+
+    public Transaction createThirdPartyRequestTransaction(TransactionDTO dto) {
+        return null;
+    }
+
+    public void validateTransaction(Transaction transaction, Optional<Account> payer, Optional<Account> target){
 
         if (payer.isPresent()) {
 
@@ -96,6 +102,18 @@ public class TransactionService implements ITransactionService {
             validateTargetName(transaction, target.get());
 
             validateAccountStatus(target.get());
+        }
+
+        if(transaction.getPayerThirdPartyAcc()!=null){
+            //validate username (from context from hashed key??) is owner of payer third party account
+
+            if(transaction.getSecretKey()!=null){
+                target.ifPresent(account -> validateSecretKey(transaction.getSecretKey(), account));
+            }
+        }
+
+        if(transaction.getTargetThirdPartyAcc()!=null){
+            validateThirdPartyTargetName(transaction, transaction.getTargetThirdPartyAcc());
         }
 
     }
@@ -120,7 +138,7 @@ public class TransactionService implements ITransactionService {
 
         String transactionTargetName = transaction.getTargetName();
 
-        var targetPrimaryName = target.getPrimaryOwner().getName();
+        String targetPrimaryName = target.getPrimaryOwner().getName();
 
         //in case we don't have a secondary name
         var targetSecondaryName = target.getSecondaryOwner() != null
@@ -131,6 +149,25 @@ public class TransactionService implements ITransactionService {
                 !targetPrimaryName.equals(transactionTargetName) && !targetSecondaryName.equals(transactionTargetName)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                     , "Transaction failed, invalid Target Name");
+        }
+    }
+
+    public void validateThirdPartyTargetName (Transaction transaction, Integer targetAcc){
+
+        String transactionTargetName = transaction.getTargetName();
+        String targetName = thirdPartyRepository.findByThirdPartyAccount(targetAcc).getName();
+
+        if(!transactionTargetName.equals(targetName)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+                    , "Transaction failed, invalid Target Name");
+        }
+    }
+
+    public void validateSecretKey(String secretKey, Account target){
+
+        if(!target.getSecretKey().equals(secretKey)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+                    , "Transaction failed, invalid Secret Key");
         }
     }
 
@@ -152,8 +189,8 @@ public class TransactionService implements ITransactionService {
 
 
     public void applyPenaltyFee(Optional<Account> payer, Optional<Account> target) {
-        if (payer.isPresent()) findMinimumBalanceAndApplyFee(payer.get());
-        if (target.isPresent()) findMinimumBalanceAndApplyFee(target.get());
+        payer.ifPresent(this::findMinimumBalanceAndApplyFee);
+        target.ifPresent(this::findMinimumBalanceAndApplyFee);
     }
 
     private void findMinimumBalanceAndApplyFee(Account account) {

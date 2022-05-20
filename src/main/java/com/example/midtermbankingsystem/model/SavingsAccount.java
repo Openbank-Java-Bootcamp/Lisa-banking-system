@@ -16,8 +16,6 @@ import java.time.LocalDate;
 @Entity
 public class SavingsAccount extends Account {
 
-    private String secretKey;
-
     @AttributeOverrides({
             @AttributeOverride(name = "amount", column = @Column(name = "minimum_balance")),
             @AttributeOverride(name = "currency", column = @Column(name = "minimum_balance_currency"))
@@ -34,8 +32,7 @@ public class SavingsAccount extends Account {
 
     public SavingsAccount(Money balance, AccountHolder primaryOwner, String secretKey, Money minimumBalance,
                           BigDecimal interestRate) {
-        super(balance, primaryOwner);
-        this.secretKey = secretKey;
+        super(balance, primaryOwner, secretKey);
         this.minimumBalance = minimumBalance;
         this.interestRate = interestRate;
     }

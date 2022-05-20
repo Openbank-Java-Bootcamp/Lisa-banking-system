@@ -26,31 +26,43 @@ public class Transaction {
     @ManyToOne
     @JoinColumn
     private Account payerAcc;
-
+    private Integer payerThirdPartyAcc;
 
     @ManyToOne
     @JoinColumn
     private Account targetAcc;
+    private Integer targetThirdPartyAcc;
 
     private String targetName;
     private String subject;
+    private String secretKey;
 
     @CreationTimestamp
     private Instant transferDate;
 
-    public Transaction(Money amount, Account payerAcc, Account targetAcc, String targetName, String subject) {
+    public Transaction(Money amount, Account payerAcc, Account targetAcc, String targetName, String subject
+            , String secretKey, Integer payerThirdPartyAcc, Integer targetThirdPartyAcc) {
         this.amount = amount;
         this.payerAcc = payerAcc;
         this.targetAcc = targetAcc;
         this.targetName = targetName;
         this.subject = subject;
+        this.secretKey = secretKey;
+        this.payerThirdPartyAcc = payerThirdPartyAcc;
+        this.targetThirdPartyAcc = targetThirdPartyAcc;
     }
+
 
     public static Transaction fromDTO(TransactionDTO dto, Optional<Account> payerAcc, Optional<Account> targetAcc) {
 
-        var payer = payerAcc.isPresent() ? payerAcc.get() : null;
-        var target = targetAcc.isPresent() ? targetAcc.get() : null;
+        var payer = payerAcc.orElse(null);
+        var target = targetAcc.orElse(null);
 
-        return new Transaction(new Money(dto.getAmount(), dto.getCurrency()), payer, target, dto.getTargetName(), dto.getSubject());
+        Integer thirdPartyAcc = dto.getThirdPartyAccount();
+        Integer payerThirdPartyAcc = payer == null ? thirdPartyAcc : null;
+        Integer targetThirdPartyAcc = payer == null ? thirdPartyAcc : null;
+
+        return new Transaction(new Money(dto.getAmount(), dto.getCurrency()), payer, target, dto.getTargetName()
+                , dto.getSubject(), dto.getSecretKey(), payerThirdPartyAcc, targetThirdPartyAcc);
     }
 }

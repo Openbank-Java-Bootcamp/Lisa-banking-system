@@ -7,6 +7,7 @@ import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.repository.CreditCardAccountRepository;
 import com.example.midtermbankingsystem.service.interfaces.ICreditCardAccountService;
 import com.example.midtermbankingsystem.utils.Color;
+import com.example.midtermbankingsystem.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,9 @@ public class CreditCardAccountService implements ICreditCardAccountService {
     @Autowired
     private AccountHolderRepository accountHolderRepository;
 
+    @Autowired
+    private Utils utils;
+
 
     public List<CreditCardAccount> getAllCreditCardAccounts() {
         List<CreditCardAccount> creditCardAccountList = creditCardAccountRepository.findAll();
@@ -44,6 +48,7 @@ public class CreditCardAccountService implements ICreditCardAccountService {
         if (foundCreditCardAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Credit Card Account found with that ID");
         } else {
+            utils.validateLoggedUserIsAccOwner(foundCreditCardAccount.get());
             addInterest(foundCreditCardAccount.get());
             return foundCreditCardAccount.get();
         }

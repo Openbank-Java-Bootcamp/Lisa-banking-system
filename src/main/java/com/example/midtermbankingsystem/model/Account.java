@@ -41,8 +41,7 @@ public class Account {
     @CreationTimestamp
     private Instant creationDate;
 
-//    @UpdateTimestamp
-//    private Instant lastUpdate;
+    private String secretKey;
 
     @Enumerated(value = EnumType.STRING)
     private Status status;
@@ -56,17 +55,19 @@ public class Account {
     @JsonIgnore
     private List<Transaction> targetTransactionList;
 
-    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
+    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey) {
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
         this.status = Status.ACTIVE;
+        this.secretKey = secretKey;
     }
 
-    public Account(Money balance, AccountHolder primaryOwner) {
+    public Account(Money balance, AccountHolder primaryOwner, String secretKey) {
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.status = Status.ACTIVE;
+        this.secretKey = secretKey;
     }
 
 

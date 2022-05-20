@@ -30,8 +30,8 @@ public class CreditCardAccount extends Account {
     @CreationTimestamp
     private LocalDate dateInterestAdded;
 
-    public CreditCardAccount(Money balance, AccountHolder primaryOwner, Money creditLimit, BigDecimal interestRate){
-        super(balance, primaryOwner);
+    public CreditCardAccount(Money balance, AccountHolder primaryOwner, String secretKey, Money creditLimit, BigDecimal interestRate){
+        super(balance, primaryOwner, secretKey);
         this.creditLimit = creditLimit;
         this.interestRate = interestRate;
     }
@@ -49,6 +49,6 @@ public class CreditCardAccount extends Account {
         var creditL = dto.getCreditLimit() != null ? dto.getCreditLimit() : new BigDecimal(100);
 
         return new CreditCardAccount(new Money(dto.getBalance(), dto.getCurrency()), primary
-                , new Money(creditL, dto.getCurrency()), interestR);
+                , dto.getSecretKey(), new Money(creditL, dto.getCurrency()), interestR);
     }
 }

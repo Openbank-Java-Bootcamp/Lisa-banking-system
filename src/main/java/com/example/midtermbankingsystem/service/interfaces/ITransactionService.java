@@ -13,7 +13,9 @@ public interface ITransactionService {
     List<Transaction> getAllTransactions();
     Transaction getTransactionById(Integer id);
     Transaction createTransaction(TransactionDTO transactionDTO);
+    Transaction createThirdPartyRequestTransaction(TransactionDTO transactionDTO);
     void applyTransaction(BigDecimal amount, Optional<Account> payer, Optional<Account> target);
     void updateTransaction(Integer id, Transaction transaction);
+
     void deleteTransaction(Integer id);
 }

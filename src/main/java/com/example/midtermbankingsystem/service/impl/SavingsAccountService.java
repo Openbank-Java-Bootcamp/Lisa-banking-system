@@ -7,6 +7,7 @@ import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.repository.SavingsAccountRepository;
 import com.example.midtermbankingsystem.service.interfaces.ISavingsAccountService;
 import com.example.midtermbankingsystem.utils.Color;
+import com.example.midtermbankingsystem.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,9 @@ public class SavingsAccountService implements ISavingsAccountService {
     @Autowired
     private AccountHolderRepository accountHolderRepository;
 
+    @Autowired
+    private Utils utils;
+
 
     public List<SavingsAccount> getAllSavingsAccounts() {
         List<SavingsAccount> savingsAccountList = savingsAccountRepository.findAll();
@@ -44,6 +48,7 @@ public class SavingsAccountService implements ISavingsAccountService {
         if (foundSavingsAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Savings Account found with that ID");
         } else {
+            utils.validateLoggedUserIsAccOwner(foundSavingsAccount.get());
             addInterest(foundSavingsAccount.get());
             return foundSavingsAccount.get();
         }

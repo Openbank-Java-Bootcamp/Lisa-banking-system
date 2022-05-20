@@ -18,9 +18,22 @@ public class TransactionController implements ITransactionController {
     @Autowired
     private ITransactionService transactionService;
 
-    @PostMapping("/new")
+    @PostMapping("/account-holder/new")
     @ResponseStatus(HttpStatus.CREATED)
     public Transaction saveTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
         return transactionService.createTransaction(transactionDTO);
+    }
+
+
+    @PostMapping("/third-party/new")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Transaction saveThirdPartyTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
+        return transactionService.createTransaction(transactionDTO);
+    }
+
+    @PostMapping("/third-party/request/new")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Transaction saveThirdPartyRequestTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
+        return transactionService.createThirdPartyRequestTransaction(transactionDTO);
     }
 }

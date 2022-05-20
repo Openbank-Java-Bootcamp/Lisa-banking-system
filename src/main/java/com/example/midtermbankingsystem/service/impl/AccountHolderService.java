@@ -4,9 +4,9 @@ import com.example.midtermbankingsystem.DTO.AccountHolderDTO;
 import com.example.midtermbankingsystem.model.AccountHolder;
 import com.example.midtermbankingsystem.repository.AccountHolderRepository;
 import com.example.midtermbankingsystem.service.interfaces.IAccountHolderService;
+import com.example.midtermbankingsystem.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,6 +22,10 @@ public class AccountHolderService implements IAccountHolderService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private Utils utils;
+
 
     public List<AccountHolder> getAllAccountHolders() {
         List<AccountHolder> accountHolderList = accountHolderRepository.findAll();
@@ -41,6 +45,9 @@ public class AccountHolderService implements IAccountHolderService {
     }
 
     public AccountHolder saveAccountHolder(AccountHolderDTO accountHolderDTO) {
+
+        utils.validateUsernameIsUnique(accountHolderDTO.getUsername());
+
         AccountHolder accountHolder = AccountHolder.fromDTO(accountHolderDTO);
         accountHolder.setPassword(passwordEncoder.encode(accountHolderDTO.getPassword()));
 

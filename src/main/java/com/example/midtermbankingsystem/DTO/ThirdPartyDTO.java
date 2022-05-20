@@ -12,4 +12,5 @@ public class ThirdPartyDTO {
     private String username;
     private String password;
     private String hashedKey;
+    private Integer thirdPartyAccount;
 }

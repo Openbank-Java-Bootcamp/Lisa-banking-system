@@ -8,16 +8,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Entity
 public class StudentCheckingAccount extends Account{
 
-    private String secretKey;
-
     public StudentCheckingAccount(Money balance, AccountHolder primaryOwner, String secretKey) {
-        super(balance, primaryOwner);
-        this.secretKey = secretKey;
+        super(balance, primaryOwner, secretKey);
     }
 
     public static StudentCheckingAccount fromDTO(StudentCheckingAccountDTO dto, AccountHolder primary, AccountHolder secondary) {

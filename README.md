@@ -31,4 +31,8 @@
 
 /api/third-parties/admin/new --POST
 
-/api/transactions/new --POST
+/api/transactions/account-holder/new --POST
+
+/api/transactions/third-party/new --POST
+
+/api/transactions/third-party/request/new --POST

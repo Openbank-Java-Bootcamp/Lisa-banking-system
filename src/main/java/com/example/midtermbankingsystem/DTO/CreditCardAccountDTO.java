@@ -18,6 +18,7 @@ public class CreditCardAccountDTO {
     private Currency currency;
     private Integer primaryOwner;
     private Integer secondaryOwner;
+    private String secretKey;
 
     @DecimalMax(value = "100000", message = "Credit Card Account's credit limit must be below 100000")
     @DecimalMin(value = "100", message = "Credit Card Account's credit limit must be above 100")

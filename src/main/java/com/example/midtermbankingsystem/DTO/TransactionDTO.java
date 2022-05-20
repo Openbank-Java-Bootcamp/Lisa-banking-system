@@ -12,16 +12,15 @@ import java.util.Currency;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionDTO {
-
     @NotNull(message = "Transaction amount must be specified")
     private BigDecimal amount;
     @NotNull(message = "Transaction currency must be specified")
     private Currency currency;
-    @NotNull(message = "Transaction Payer Account ID must be specified")
     private Integer payerAccId;
-    @NotNull(message = "Transaction Target Account ID must be specified")
     private Integer targetAccId;
     @NotNull(message = "Transaction Target Account Holder Name must be specified")
     private String targetName;
     private String subject;
+    private String secretKey;
+    private Integer thirdPartyAccount;
 }

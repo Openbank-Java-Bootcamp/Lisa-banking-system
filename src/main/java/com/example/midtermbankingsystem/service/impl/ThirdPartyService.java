@@ -4,6 +4,7 @@ import com.example.midtermbankingsystem.DTO.ThirdPartyDTO;
 import com.example.midtermbankingsystem.model.ThirdParty;
 import com.example.midtermbankingsystem.repository.ThirdPartyRepository;
 import com.example.midtermbankingsystem.service.interfaces.IThirdPartyService;
+import com.example.midtermbankingsystem.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class ThirdPartyService implements IThirdPartyService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private Utils utils;
+
 
     public List<ThirdParty> getAllThirdParties() {
         List<ThirdParty> thirdPartyList = thirdPartyRepository.findAll();
@@ -45,8 +49,12 @@ public class ThirdPartyService implements IThirdPartyService {
     }
 
     public ThirdParty saveThirdParty(ThirdPartyDTO thirdPartyDTO) {
+
+        utils.validateUsernameIsUnique(thirdPartyDTO.getUsername());
+
         ThirdParty thirdParty = ThirdParty.fromDTO(thirdPartyDTO);
         thirdParty.setPassword(passwordEncoder.encode(thirdPartyDTO.getPassword()));
+        thirdParty.setHashedKey(thirdPartyDTO.getHashedKey());
 
         try {
             return thirdPartyRepository.save(thirdParty);

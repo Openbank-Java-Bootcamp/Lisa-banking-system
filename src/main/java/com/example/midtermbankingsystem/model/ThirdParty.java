@@ -14,15 +14,17 @@ import javax.persistence.Entity;
 @Entity
 public class ThirdParty extends User{
     private String hashedKey;
+    private Integer thirdPartyAccount;
 
-    public ThirdParty( String name, String password, String username, String hashedKey) {
+    public ThirdParty( String name, String password, String username, String hashedKey, Integer thirdPartyAccount) {
         super(name, password, Role.THIRD_PARTY, username);
         this.hashedKey = hashedKey;
+        this.thirdPartyAccount = thirdPartyAccount;
     }
 
 
     public static ThirdParty fromDTO(ThirdPartyDTO dto) {
-        return new ThirdParty(dto.getName(), dto.getPassword(), dto.getUsername(), dto.getHashedKey());
+        return new ThirdParty(dto.getName(), dto.getPassword(), dto.getUsername(), dto.getHashedKey(), dto.getThirdPartyAccount());
     }
 
 }

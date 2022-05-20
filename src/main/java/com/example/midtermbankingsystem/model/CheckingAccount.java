@@ -14,8 +14,6 @@ import java.math.BigDecimal;
 @Entity
 public class CheckingAccount extends Account {
 
-    private String secretKey;
-
     @AttributeOverrides({
             @AttributeOverride(name = "amount", column = @Column(name = "minimum_balance")),
             @AttributeOverride(name = "currency", column = @Column(name = "minimum_balance_currency"))
@@ -34,8 +32,7 @@ public class CheckingAccount extends Account {
 
     public CheckingAccount(Money balance, AccountHolder primaryOwner, String secretKey, Money minimumBalance,
                            Money monthlyMaintenanceFee) {
-        super(balance, primaryOwner);
-        this.secretKey = secretKey;
+        super(balance, primaryOwner, secretKey);
         this.minimumBalance = minimumBalance;
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;
     }

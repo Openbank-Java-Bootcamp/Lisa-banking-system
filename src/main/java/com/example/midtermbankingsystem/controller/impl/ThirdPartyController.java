@@ -17,7 +17,7 @@ public class ThirdPartyController implements IThirdPartyController {
     @Autowired
     private IThirdPartyService thirdPartyService;
 
-    @PostMapping("/new")
+    @PostMapping("/admin/new")
     @ResponseStatus(HttpStatus.CREATED)
     public ThirdParty saveThirdParty(@RequestBody @Valid ThirdPartyDTO thirdPartyDTO) {
         return thirdPartyService.saveThirdParty(thirdPartyDTO);

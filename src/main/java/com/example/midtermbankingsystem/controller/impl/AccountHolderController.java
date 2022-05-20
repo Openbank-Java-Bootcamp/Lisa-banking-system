@@ -17,7 +17,7 @@ public class AccountHolderController implements IAccountHolderController {
     @Autowired
     private IAccountHolderService accountHolderService;
 
-    @PostMapping("/new")
+    @PostMapping("/admin/new")
     @ResponseStatus(HttpStatus.CREATED)
     public AccountHolder saveAccountHolder(@RequestBody @Valid AccountHolderDTO accountHolderDTO) {
         return accountHolderService.saveAccountHolder(accountHolderDTO);

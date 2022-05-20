@@ -12,6 +12,7 @@ import com.example.midtermbankingsystem.repository.SavingsAccountRepository;
 import com.example.midtermbankingsystem.repository.TransactionRepository;
 import com.example.midtermbankingsystem.service.interfaces.ITransactionService;
 import com.example.midtermbankingsystem.utils.Color;
+import com.example.midtermbankingsystem.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,9 @@ public class TransactionService implements ITransactionService {
 
     @Autowired
     private CheckingAccountService checkingAccountService;
+
+    @Autowired
+    private Utils utils;
 
 
     public List<Transaction> getAllTransactions() {
@@ -80,44 +84,47 @@ public class TransactionService implements ITransactionService {
 
         if (payer.isPresent()) {
 
-            validateFunds(transaction, payer);
+            utils.validateLoggedUserIsAccOwner(payer.get());
 
-            validateAccountStatus(payer);
+            validateFunds(transaction, payer.get());
+
+            validateAccountStatus(payer.get());
         }
 
         if (target.isPresent()) {
 
-            validateTargetName(transaction, target);
+            validateTargetName(transaction, target.get());
 
-            validateAccountStatus(target);
+            validateAccountStatus(target.get());
         }
 
     }
 
-    private void validateAccountStatus(Optional<Account> account) {
+
+    private void validateAccountStatus(Account account) {
         //validating account isn't frozen
-        if (account.get().getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+        if (account.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                 , "Transaction failed, Payer Account is frozen");
     }
 
-    private void validateFunds(Transaction transaction, Optional<Account> payer) {
+    private void validateFunds(Transaction transaction, Account payer) {
         //validating sufficient funds
-        BigDecimal payerBalance = payer.get().getBalance().getAmount();
+        BigDecimal payerBalance = payer.getBalance().getAmount();
         BigDecimal amount = transaction.getAmount().getAmount();
 
         if (amount.compareTo(payerBalance) == 1) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                 , "Transaction failed, insufficient funds");
     }
 
-    private void validateTargetName(Transaction transaction, Optional<Account> target) {
+    private void validateTargetName(Transaction transaction, Account target) {
 
         String transactionTargetName = transaction.getTargetName();
 
-        var targetPrimaryName = target.get().getPrimaryOwner().getName();
+        var targetPrimaryName = target.getPrimaryOwner().getName();
 
         //in case we don't have a secondary name
-        var targetSecondaryName = target.get().getSecondaryOwner() != null
-                ? target.get().getSecondaryOwner().getName() : null;
+        var targetSecondaryName = target.getSecondaryOwner() != null
+                ? target.getSecondaryOwner().getName() : null;
 
 
         if (targetSecondaryName == null ? !targetPrimaryName.equals(transactionTargetName) :
@@ -145,20 +152,20 @@ public class TransactionService implements ITransactionService {
 
 
     public void applyPenaltyFee(Optional<Account> payer, Optional<Account> target) {
-        if (payer.isPresent()) findMinimumBalanceAndApplyFee(payer);
-        if (target.isPresent()) findMinimumBalanceAndApplyFee(target);
+        if (payer.isPresent()) findMinimumBalanceAndApplyFee(payer.get());
+        if (target.isPresent()) findMinimumBalanceAndApplyFee(target.get());
     }
 
-    private void findMinimumBalanceAndApplyFee(Optional<Account> account) {
+    private void findMinimumBalanceAndApplyFee(Account account) {
 
-        String accountType = account.get().getClass().toString();
+        String accountType = account.getClass().toString();
 
-        var balance = account.get().getBalance().getAmount();
-        var currency = account.get().getBalance().getCurrency();
+        var balance = account.getBalance().getAmount();
+        var currency = account.getBalance().getCurrency();
 
 
         if (accountType.contains(".SavingsAccount")) {
-            var targetSavingsAcc = savingsAccountService.getSavingsAccountById(account.get().getId());
+            var targetSavingsAcc = savingsAccountService.getSavingsAccountById(account.getId());
 
             if (targetSavingsAcc.getBalance().getAmount().compareTo(targetSavingsAcc.getMinimumBalance().getAmount()) == -1) {
 
@@ -167,12 +174,12 @@ public class TransactionService implements ITransactionService {
                 savingsAccountRepository.save(targetSavingsAcc);
 
                 log.info(Color.YELLOW_BOLD_BRIGHT + "Savings Account balance: {} below minimum balance : {} Applying Penalty Fee"
-                                + Color.RESET, balance, targetSavingsAcc.getMinimumBalance().getAmount());
+                        + Color.RESET, balance, targetSavingsAcc.getMinimumBalance().getAmount());
 
             }
 
         } else if (accountType.contains(".CheckingAccount")) {
-            var targetCheckingAcc = checkingAccountService.getCheckingAccountById(account.get().getId());
+            var targetCheckingAcc = checkingAccountService.getCheckingAccountById(account.getId());
 
             if (targetCheckingAcc.getBalance().getAmount().compareTo(targetCheckingAcc.getMinimumBalance().getAmount()) == -1) {
 

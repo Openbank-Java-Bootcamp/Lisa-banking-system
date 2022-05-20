@@ -7,6 +7,7 @@ import com.example.midtermbankingsystem.model.Account;
 import com.example.midtermbankingsystem.model.Money;
 import com.example.midtermbankingsystem.repository.AccountRepository;
 import com.example.midtermbankingsystem.service.interfaces.IAccountService;
+import com.example.midtermbankingsystem.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,15 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+
 @Service
 public class AccountService implements IAccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private Utils utils;
 
 
     public Account getAccountById(Integer id) {
@@ -58,6 +63,8 @@ public class AccountService implements IAccountService {
 
     public Money getAccountBalance(Integer id) {
         Account account = getAccountById(id);
+
+        utils.validateLoggedUserIsAccOwner(account);
 
         return account.getBalance();
     }

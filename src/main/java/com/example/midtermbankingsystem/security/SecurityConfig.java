@@ -64,14 +64,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers("/api/login/**").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/users").hasAnyAuthority("ROLE_USER");
-        http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(POST, "/api/blogposts/**").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(POST, "/api/authors/**").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(PUT, "/api/blogposts/**").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(PUT, "/api/authors/**").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(DELETE, "/api/blogposts/**").hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().antMatchers(DELETE, "/api/authors/**").hasAnyAuthority("ROLE_ADMIN");
+
+        http.authorizeRequests().antMatchers(PATCH, "/api/accounts/admin/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/api/accounts/balance/{id}").hasAnyAuthority("ACCOUNT_HOLDER","ADMIN");
+
+        http.authorizeRequests().antMatchers(POST, "/api/account-holders/admin/new").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(POST, "/api/admins/admin/new").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(POST, "/api/checking-accounts/admin/new").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(POST, "/api/credit-card-accounts/admin/new").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/api/credit-card-accounts/{id}").hasAnyAuthority("ACCOUNT_HOLDER","ADMIN");
+
+        http.authorizeRequests().antMatchers(POST, "/api/savings-accounts/admin/new").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/api/savings-accounts/{id}").hasAnyAuthority("ACCOUNT_HOLDER","ADMIN");
+
+        http.authorizeRequests().antMatchers(POST, "/api/student-checking-accounts/admin/new").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(POST, "/api/third-parties/admin/new").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(POST, "/api/transactions/new").hasAnyAuthority("ACCOUNT_HOLDER");
+
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

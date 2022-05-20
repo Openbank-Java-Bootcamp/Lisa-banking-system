@@ -14,7 +14,5 @@ public class Admin extends User {
 
     public Admin(String name, String password, String username) {super(name, password, Role.ADMIN, username);}
 
-    public static Admin fromDTO(AdminDTO dto) {
-        return new Admin(dto.getName(), dto.getUsername(), dto.getPassword());
-    }
+    public static Admin fromDTO(AdminDTO dto) {return new Admin(dto.getName(),  dto.getPassword(), dto.getUsername());}
 }

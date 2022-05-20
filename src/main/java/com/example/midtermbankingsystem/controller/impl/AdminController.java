@@ -17,7 +17,7 @@ public class AdminController implements IAdminController {
     @Autowired
     private IAdminService adminService;
 
-    @PostMapping("/new")
+    @PostMapping("/admin/new")
     @ResponseStatus(HttpStatus.CREATED)
     public Admin saveAdmin(@RequestBody @Valid AdminDTO adminDTO) {
         return adminService.saveAdmin(adminDTO);

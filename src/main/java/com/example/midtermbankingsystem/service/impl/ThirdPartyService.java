@@ -4,6 +4,8 @@ import com.example.midtermbankingsystem.DTO.ThirdPartyDTO;
 import com.example.midtermbankingsystem.model.ThirdParty;
 import com.example.midtermbankingsystem.repository.ThirdPartyRepository;
 import com.example.midtermbankingsystem.service.interfaces.IThirdPartyService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class ThirdPartyService implements IThirdPartyService {
 
     @Autowired
@@ -21,6 +25,7 @@ public class ThirdPartyService implements IThirdPartyService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
 
     public List<ThirdParty> getAllThirdParties() {
         List<ThirdParty> thirdPartyList = thirdPartyRepository.findAll();

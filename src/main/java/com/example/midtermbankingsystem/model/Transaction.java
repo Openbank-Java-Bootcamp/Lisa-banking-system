@@ -55,12 +55,12 @@ public class Transaction {
 
     public static Transaction fromDTO(TransactionDTO dto, Optional<Account> payerAcc, Optional<Account> targetAcc) {
 
-        var payer = payerAcc.orElse(null);
-        var target = targetAcc.orElse(null);
+        var payer = payerAcc==null ? null : payerAcc.get();
+        var target = targetAcc==null ? null : targetAcc.get();
 
         Integer thirdPartyAcc = dto.getThirdPartyAccount();
         Integer payerThirdPartyAcc = payer == null ? thirdPartyAcc : null;
-        Integer targetThirdPartyAcc = payer == null ? thirdPartyAcc : null;
+        Integer targetThirdPartyAcc = target == null ? thirdPartyAcc : null;
 
         return new Transaction(new Money(dto.getAmount(), dto.getCurrency()), payer, target, dto.getTargetName()
                 , dto.getSubject(), dto.getSecretKey(), payerThirdPartyAcc, targetThirdPartyAcc);

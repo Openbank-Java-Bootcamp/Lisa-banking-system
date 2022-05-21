@@ -1,5 +1,6 @@
 package com.example.midtermbankingsystem.utils;
 
+import com.example.midtermbankingsystem.enums.Role;
 import com.example.midtermbankingsystem.model.Account;
 import com.example.midtermbankingsystem.model.User;
 import com.example.midtermbankingsystem.repository.UserRepository;
@@ -29,10 +30,14 @@ public class Utils {
             username = principal.toString();
         }
 
-        if (account.getSecondaryOwner() == null ? !account.getPrimaryOwner().getUsername().equals(username)
-                : !account.getPrimaryOwner().getUsername().equals(username) && !account.getSecondaryOwner().getUsername().equals(username)) {
+        Role role = userRepository.findByUsername(username).getRole();
 
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unable to access this account as logged user isn't the owner");
+        if(role!=Role.ADMIN) {
+            if (account.getSecondaryOwner() == null ? !account.getPrimaryOwner().getUsername().equals(username)
+                    : !account.getPrimaryOwner().getUsername().equals(username) && !account.getSecondaryOwner().getUsername().equals(username)) {
+
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unable to access this account as logged user isn't the owner");
+            }
         }
     }
 

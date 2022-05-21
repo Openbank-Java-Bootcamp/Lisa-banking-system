@@ -59,12 +59,12 @@ public class TransactionService implements ITransactionService {
 
     public Transaction createTransaction(TransactionDTO dto) {
 
-        var payerAccount = accountRepository.findById(dto.getPayerAccId());
-        var targetAccount = accountRepository.findById(dto.getTargetAccId());
+        var payerAccount = dto.getPayerAccId() != null ? accountRepository.findById(dto.getPayerAccId()) : null;
+        var targetAccount = dto.getTargetAccId() != null ? accountRepository.findById(dto.getTargetAccId()) : null;
         var transaction = Transaction.fromDTO(dto, payerAccount, targetAccount);
 
 
-        if (payerAccount.isEmpty() && targetAccount.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+        if (payerAccount == null && targetAccount == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                 , "Payer or Target Account must be in our banking system");
 
 
@@ -86,10 +86,10 @@ public class TransactionService implements ITransactionService {
         return null;
     }
 
-    public void validateTransaction(Transaction transaction, Optional<Account> payer, Optional<Account> target){
+    public void validateTransaction(Transaction transaction, Optional<Account> payer, Optional<Account> target) {
 
-        if (payer.isPresent()) {
-
+//        if (payer.isPresent()) {
+        if (payer != null) {
             utils.validateLoggedUserIsAccOwner(payer.get());
 
             validateFunds(transaction, payer.get());
@@ -97,22 +97,23 @@ public class TransactionService implements ITransactionService {
             validateAccountStatus(payer.get());
         }
 
-        if (target.isPresent()) {
-
+//        if (target.isPresent()) {
+        if (target != null) {
             validateTargetName(transaction, target.get());
 
             validateAccountStatus(target.get());
         }
 
-        if(transaction.getPayerThirdPartyAcc()!=null){
+        if (transaction.getPayerThirdPartyAcc() != null) {
             //validate username (from context from hashed key??) is owner of payer third party account
 
-            if(transaction.getSecretKey()!=null){
-                target.ifPresent(account -> validateSecretKey(transaction.getSecretKey(), account));
+            if (transaction.getSecretKey() != null) {
+                //target.ifPresent(account -> validateSecretKey(transaction.getSecretKey(), account));
+                if (target != null) validateSecretKey(transaction.getSecretKey(), target.get());
             }
         }
 
-        if(transaction.getTargetThirdPartyAcc()!=null){
+        if (transaction.getTargetThirdPartyAcc() != null) {
             validateThirdPartyTargetName(transaction, transaction.getTargetThirdPartyAcc());
         }
 
@@ -152,20 +153,24 @@ public class TransactionService implements ITransactionService {
         }
     }
 
-    public void validateThirdPartyTargetName (Transaction transaction, Integer targetAcc){
+    public void validateThirdPartyTargetName(Transaction transaction, Integer targetAcc) {
 
         String transactionTargetName = transaction.getTargetName();
-        String targetName = thirdPartyRepository.findByThirdPartyAccount(targetAcc).getName();
 
-        if(!transactionTargetName.equals(targetName)){
+        var targetAccount = thirdPartyRepository.findByThirdPartyAccount(targetAcc)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account found with ID " + targetAcc));
+
+        String targetName = targetAccount.getName();
+
+        if (!transactionTargetName.equals(targetName)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                     , "Transaction failed, invalid Target Name");
         }
     }
 
-    public void validateSecretKey(String secretKey, Account target){
+    public void validateSecretKey(String secretKey, Account target) {
 
-        if(!target.getSecretKey().equals(secretKey)){
+        if (!target.getSecretKey().equals(secretKey)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                     , "Transaction failed, invalid Secret Key");
         }
@@ -174,13 +179,15 @@ public class TransactionService implements ITransactionService {
 
     public void applyTransaction(BigDecimal amount, Optional<Account> payer, Optional<Account> target) {
 
-        if (payer.isPresent()) {
+//        if (payer.isPresent()) {
+        if (payer != null) {
             var payerBalance = payer.get().getBalance().getAmount();
             payer.get().setBalance(new Money(payerBalance.subtract(amount), payer.get().getBalance().getCurrency()));
             accountRepository.save(payer.get());
         }
 
-        if (target.isPresent()) {
+//        if (target.isPresent()) {
+        if (target != null) {
             var targetBalance = target.get().getBalance().getAmount();
             target.get().setBalance(new Money(targetBalance.add(amount), target.get().getBalance().getCurrency()));
             accountRepository.save(target.get());
@@ -189,8 +196,10 @@ public class TransactionService implements ITransactionService {
 
 
     public void applyPenaltyFee(Optional<Account> payer, Optional<Account> target) {
-        payer.ifPresent(this::findMinimumBalanceAndApplyFee);
-        target.ifPresent(this::findMinimumBalanceAndApplyFee);
+//        payer.ifPresent(this::findMinimumBalanceAndApplyFee);
+//        target.ifPresent(this::findMinimumBalanceAndApplyFee);
+        if (payer != null) findMinimumBalanceAndApplyFee(payer.get());
+        if (target != null) findMinimumBalanceAndApplyFee(target.get());
     }
 
     private void findMinimumBalanceAndApplyFee(Account account) {

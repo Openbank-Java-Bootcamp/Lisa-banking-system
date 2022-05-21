@@ -64,6 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers("/api/login/**").permitAll();
+        http.authorizeRequests().antMatchers(POST, "/api/transactions/third-party/new").permitAll();
+        http.authorizeRequests().antMatchers(POST, "/api/transactions/third-party/request/new").permitAll();
 
         http.authorizeRequests().antMatchers(PATCH, "/api/accounts/admin/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/api/accounts/balance/{id}").hasAnyAuthority("ACCOUNT_HOLDER","ADMIN");
@@ -85,6 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(POST, "/api/third-parties/admin/new").hasAnyAuthority("ADMIN");
 
         http.authorizeRequests().antMatchers(POST, "/api/transactions/account-holder/new").hasAnyAuthority("ACCOUNT_HOLDER");
+
 
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);

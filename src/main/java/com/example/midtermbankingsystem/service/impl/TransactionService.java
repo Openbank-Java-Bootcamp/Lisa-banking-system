@@ -37,13 +37,10 @@ public class TransactionService implements ITransactionService {
     private CheckingAccountRepository checkingAccountRepository;
 
     @Autowired
-    private SavingsAccountService savingsAccountService;
-
-    @Autowired
-    private CheckingAccountService checkingAccountService;
-
-    @Autowired
     private ThirdPartyRepository thirdPartyRepository;
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private Utils utils;
@@ -59,8 +56,8 @@ public class TransactionService implements ITransactionService {
 
     public Transaction createTransaction(TransactionDTO dto) {
 
-        var payerAccount = dto.getPayerAccId() != null ? accountRepository.findById(dto.getPayerAccId()) : null;
-        var targetAccount = dto.getTargetAccId() != null ? accountRepository.findById(dto.getTargetAccId()) : null;
+        var payerAccount = dto.getPayerAccId() != null ? Optional.of(accountService.getAccountById(dto.getPayerAccId())) : null;
+        var targetAccount = dto.getTargetAccId() != null ? Optional.of(accountService.getAccountById(dto.getTargetAccId())) : null;
         var transaction = Transaction.fromDTO(dto, payerAccount, targetAccount);
 
 
@@ -111,6 +108,9 @@ public class TransactionService implements ITransactionService {
                 //target.ifPresent(account -> validateSecretKey(transaction.getSecretKey(), account));
                 if (target != null) validateSecretKey(transaction.getSecretKey(), target.get());
             }
+
+            if (transaction.getSecretKey() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+                    , "Transaction failed, Third Parties must provide Target Account Secret Key");
         }
 
         if (transaction.getTargetThirdPartyAcc() != null) {
@@ -211,7 +211,8 @@ public class TransactionService implements ITransactionService {
 
 
         if (accountType.contains(".SavingsAccount")) {
-            var targetSavingsAcc = savingsAccountService.getSavingsAccountById(account.getId());
+            var targetSavingsAcc = savingsAccountRepository.findById(account.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Savings Account found with ID " + account.getId()));
 
             if (targetSavingsAcc.getBalance().getAmount().compareTo(targetSavingsAcc.getMinimumBalance().getAmount()) == -1) {
 
@@ -225,7 +226,8 @@ public class TransactionService implements ITransactionService {
             }
 
         } else if (accountType.contains(".CheckingAccount")) {
-            var targetCheckingAcc = checkingAccountService.getCheckingAccountById(account.getId());
+            var targetCheckingAcc = checkingAccountRepository.findById(account.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Savings Account found with ID " + account.getId()));
 
             if (targetCheckingAcc.getBalance().getAmount().compareTo(targetCheckingAcc.getMinimumBalance().getAmount()) == -1) {
 

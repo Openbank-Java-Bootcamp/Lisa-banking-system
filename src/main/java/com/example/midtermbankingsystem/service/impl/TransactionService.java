@@ -85,7 +85,6 @@ public class TransactionService implements ITransactionService {
 
     public void validateTransaction(Transaction transaction, Optional<Account> payer, Optional<Account> target) {
 
-//        if (payer.isPresent()) {
         if (payer != null) {
             utils.validateLoggedUserIsAccOwner(payer.get());
 
@@ -94,7 +93,6 @@ public class TransactionService implements ITransactionService {
             validateAccountStatus(payer.get());
         }
 
-//        if (target.isPresent()) {
         if (target != null) {
             validateTargetName(transaction, target.get());
 
@@ -179,14 +177,12 @@ public class TransactionService implements ITransactionService {
 
     public void applyTransaction(BigDecimal amount, Optional<Account> payer, Optional<Account> target) {
 
-//        if (payer.isPresent()) {
         if (payer != null) {
             var payerBalance = payer.get().getBalance().getAmount();
             payer.get().setBalance(new Money(payerBalance.subtract(amount), payer.get().getBalance().getCurrency()));
             accountRepository.save(payer.get());
         }
 
-//        if (target.isPresent()) {
         if (target != null) {
             var targetBalance = target.get().getBalance().getAmount();
             target.get().setBalance(new Money(targetBalance.add(amount), target.get().getBalance().getCurrency()));
@@ -196,8 +192,6 @@ public class TransactionService implements ITransactionService {
 
 
     public void applyPenaltyFee(Optional<Account> payer, Optional<Account> target) {
-//        payer.ifPresent(this::findMinimumBalanceAndApplyFee);
-//        target.ifPresent(this::findMinimumBalanceAndApplyFee);
         if (payer != null) findMinimumBalanceAndApplyFee(payer.get());
         if (target != null) findMinimumBalanceAndApplyFee(target.get());
     }

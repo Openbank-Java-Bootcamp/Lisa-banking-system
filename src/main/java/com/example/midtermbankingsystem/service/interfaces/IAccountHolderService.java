@@ -10,5 +10,5 @@ public interface IAccountHolderService {
     AccountHolder getAccountHolderById(Integer id);
     AccountHolder saveAccountHolder(AccountHolderDTO accountHolderDTO);
     void updateAccountHolder(Integer id, AccountHolder accountHolder);
-    void deleteAccountHolder(Integer id);
+    AccountHolder deleteAccountHolder(Integer id);
 }

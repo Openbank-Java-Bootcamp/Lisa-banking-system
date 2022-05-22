@@ -15,8 +15,5 @@ public interface ITransactionService {
     Transaction createTransaction(TransactionDTO dto);
     Transaction createThirdPartyTransaction(TransactionDTO dto);
     void updateTransaction(Integer id, Transaction transaction);
-
     void deleteTransaction(Integer id);
-
-    List<Transaction> findByPayerAccIdOrderedByDate(Integer id);
 }

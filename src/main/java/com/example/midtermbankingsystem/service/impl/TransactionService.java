@@ -253,22 +253,6 @@ public class TransactionService implements ITransactionService {
 
     }
 
-    @Override
-    public List<Transaction> findByPayerAccIdOrderedByDate(Integer id) {
-
-        var foundAccount = accountService.getAccountById(id);
-
-        var accountList = transactionRepository.findByPayerAccOrderByTransferDate(foundAccount);
-
-        var mostRecentAccount = accountList.get(accountList.size() - 1);
-
-        log.info(Color.YELLOW_BOLD_BRIGHT + "Most recent is {}"
-                + Color.RESET, mostRecentAccount);
-
-        return transactionRepository.findByPayerAccOrderByTransferDate(foundAccount);
-    }
-
-
     public void validateTimeSinceLastTransactions(Account payer) {
 
         var accountList = transactionRepository.findByPayerAccOrderByTransferDate(payer);

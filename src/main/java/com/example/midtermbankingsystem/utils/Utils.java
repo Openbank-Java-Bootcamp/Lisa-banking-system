@@ -59,7 +59,15 @@ public class Utils {
 
         if(thirdParty.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unable to create Third Party, hashed key already exists");
+        }
+    }
 
+    public void validateThirdPartyIsUnique(Integer accountId){
+
+        Optional<ThirdParty> thirdParty = thirdPartyRepository.findByThirdPartyAccount(accountId);
+
+        if(thirdParty.isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unable to create Third Party, account id already exists");
         }
     }
 }

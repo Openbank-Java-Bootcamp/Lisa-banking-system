@@ -28,7 +28,7 @@ public class AccountController implements IAccountController {
 
     @PatchMapping("/admin/balance/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Account patchAccountBalance(@PathVariable("id")Integer id, @RequestBody AccountBalanceDTO accountBalanceDTO) {
+    public Account patchAccountBalance(@PathVariable("id")Integer id, @RequestBody @Valid AccountBalanceDTO accountBalanceDTO) {
         return accountService.changeAccountBalance(id, accountBalanceDTO);
     }
 
@@ -38,4 +38,9 @@ public class AccountController implements IAccountController {
         return accountService.getAccountBalance(id);
     }
 
+    @DeleteMapping("/admin/delete/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Account deleteAccount(@PathVariable("id")Integer id){
+        return accountService.deleteAccount(id);
+    }
 }

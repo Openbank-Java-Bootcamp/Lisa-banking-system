@@ -11,9 +11,13 @@
 
 /api/accounts/admin/balance/{id} --PATCH
 
+/api/accounts/admin/delete/{id} --DELETE
+
 /api/accounts/balance/{id} --GET
 
 /api/account-holders/admin/new --POST
+
+/api/account-holders/admin/delete/{id} --DELETE
 
 /api/admins/admin/new --POST
 

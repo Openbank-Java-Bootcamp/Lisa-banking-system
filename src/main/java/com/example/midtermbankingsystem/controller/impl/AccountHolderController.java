@@ -22,4 +22,10 @@ public class AccountHolderController implements IAccountHolderController {
     public AccountHolder saveAccountHolder(@RequestBody @Valid AccountHolderDTO accountHolderDTO) {
         return accountHolderService.saveAccountHolder(accountHolderDTO);
     }
+
+    @DeleteMapping("/admin/delete/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public AccountHolder deleteAccountHolder(@PathVariable("id")Integer id){
+        return accountHolderService.deleteAccountHolder(id);
+    }
 }

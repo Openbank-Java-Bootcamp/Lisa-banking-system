@@ -54,8 +54,4 @@ public class TransactionController implements ITransactionController {
         return transactionService.createThirdPartyTransaction(transactionDTO);
     }
 
-    @GetMapping("/test/{id}")
-    public List<Transaction> test (@PathVariable Integer id){
-        return transactionService.findByPayerAccIdOrderedByDate(id);
-    }
 }

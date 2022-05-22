@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -31,7 +32,7 @@ public class CheckingAccountController implements ICheckingAccountController {
 
     @PostMapping("/admin/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public Account saveCheckingAccount(@RequestBody CheckingAccountDTO dto) {
+    public Account saveCheckingAccount(@RequestBody @Valid CheckingAccountDTO dto) {
 
         var primaryOwner = accountHolderRepository.findById(dto.getPrimaryOwner())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with ID " + dto.getPrimaryOwner()));

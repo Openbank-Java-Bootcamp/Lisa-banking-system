@@ -67,4 +67,12 @@ public class AccountService implements IAccountService {
 
         return account.getBalance();
     }
+
+    public Account deleteAccount(Integer id) {
+        Account foundAccount = getAccountById(id);
+
+        accountRepository.delete(foundAccount);
+
+        return foundAccount;
+    }
 }

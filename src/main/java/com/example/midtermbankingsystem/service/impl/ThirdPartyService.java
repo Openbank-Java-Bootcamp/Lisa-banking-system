@@ -54,6 +54,8 @@ public class ThirdPartyService implements IThirdPartyService {
 
         ThirdParty thirdParty = ThirdParty.fromDTO(thirdPartyDTO);
         thirdParty.setPassword(passwordEncoder.encode(thirdPartyDTO.getPassword()));
+        utils.validateKeyIsUnique(thirdPartyDTO.getHashedKey());
+        utils.validateThirdPartyIsUnique(thirdPartyDTO.getThirdPartyAccount());
         thirdParty.setHashedKey(thirdPartyDTO.getHashedKey());
 
         try {

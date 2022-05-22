@@ -14,6 +14,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "users")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class User {
 

@@ -10,4 +10,5 @@ public interface IAccountService {
     Account changeAccountStatus(Integer id, AccountStatusDTO accountStatusDTO);
     Account changeAccountBalance(Integer id, AccountBalanceDTO accountBalanceDTO);
     Money getAccountBalance(Integer id);
+    Account deleteAccount(Integer id);
 }

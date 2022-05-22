@@ -82,11 +82,10 @@ public class AccountHolderService implements IAccountHolderService {
         }
     }
 
-    public void deleteAccountHolder(Integer id) {
-        Optional<AccountHolder> foundAccountHolder = accountHolderRepository.findById(id);
-        if (foundAccountHolder.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Account Holder found with that ID");
-        }
-        accountHolderRepository.delete(foundAccountHolder.get());
+    public AccountHolder deleteAccountHolder(Integer id) {
+        AccountHolder foundAccountHolder = getAccountHolderById(id);
+        accountHolderRepository.delete(foundAccountHolder);
+
+        return foundAccountHolder;
     }
 }

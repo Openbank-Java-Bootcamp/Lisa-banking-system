@@ -60,13 +60,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers("/api/login/**").permitAll();
         http.authorizeRequests().antMatchers(POST, "/api/transactions/third-party/new").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/transactions/test/{id}").permitAll();
 
 
         http.authorizeRequests().antMatchers(PATCH, "/api/accounts/admin/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(DELETE, "/api/accounts/admin/delete/{id}").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(GET, "/api/accounts/balance/{id}").hasAnyAuthority("ACCOUNT_HOLDER","ADMIN");
 
         http.authorizeRequests().antMatchers(POST, "/api/account-holders/admin/new").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(DELETE, "/api/account-holders/admin/delete/{id}").hasAnyAuthority("ADMIN");
 
         http.authorizeRequests().antMatchers(POST, "/api/admins/admin/new").hasAnyAuthority("ADMIN");
 

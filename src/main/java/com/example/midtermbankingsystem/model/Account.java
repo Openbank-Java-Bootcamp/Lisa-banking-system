@@ -30,7 +30,8 @@ public class Account {
     @Embedded
     private Money balance;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST})
+//    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @ManyToOne
     @JoinColumn(name = "primary_owner")
     private AccountHolder primaryOwner;
 

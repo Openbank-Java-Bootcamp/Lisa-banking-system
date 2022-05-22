@@ -35,7 +35,8 @@ public class AccountHolder extends User {
     @Embedded
     private Address mailingAddress;
 
-    @OneToMany(mappedBy = "primaryOwner", cascade = {CascadeType.PERSIST})
+//    @OneToMany(mappedBy = "primaryOwner", cascade = {CascadeType.PERSIST})
+    @OneToMany(mappedBy = "primaryOwner")
     @JsonIgnore
     private List<Account> primaryAccountList = new ArrayList<>();
 

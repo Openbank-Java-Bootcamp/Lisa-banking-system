@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface ThirdPartyRepository extends JpaRepository<ThirdParty, Integer> {
 
     Optional<ThirdParty> findByThirdPartyAccount(Integer thirdPartyAccount);
+    ThirdParty findByHashedKey(String hashedKey);
 }

@@ -12,10 +12,11 @@ import java.util.Optional;
 public interface ITransactionService {
     List<Transaction> getAllTransactions();
     Transaction getTransactionById(Integer id);
-    Transaction createTransaction(TransactionDTO transactionDTO);
-    Transaction createThirdPartyRequestTransaction(TransactionDTO transactionDTO);
-    void applyTransaction(BigDecimal amount, Optional<Account> payer, Optional<Account> target);
+    Transaction createTransaction(TransactionDTO dto);
+    Transaction createThirdPartyTransaction(TransactionDTO dto);
     void updateTransaction(Integer id, Transaction transaction);
 
     void deleteTransaction(Integer id);
+
+    List<Transaction> findByPayerAccIdOrderedByDate(Integer id);
 }

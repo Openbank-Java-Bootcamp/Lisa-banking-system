@@ -1,6 +1,7 @@
 package com.example.midtermbankingsystem.service.impl;
 
 
+import com.example.midtermbankingsystem.DTO.AccountStatusDTO;
 import com.example.midtermbankingsystem.DTO.TransactionDTO;
 import com.example.midtermbankingsystem.enums.Status;
 import com.example.midtermbankingsystem.model.Account;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,11 +57,22 @@ public class TransactionService implements ITransactionService {
     }
 
     public Transaction createTransaction(TransactionDTO dto) {
-
         var payerAccount = dto.getPayerAccId() != null ? Optional.of(accountService.getAccountById(dto.getPayerAccId())) : null;
         var targetAccount = dto.getTargetAccId() != null ? Optional.of(accountService.getAccountById(dto.getTargetAccId())) : null;
         var transaction = Transaction.fromDTO(dto, payerAccount, targetAccount);
 
+        return processTransaction(payerAccount, targetAccount, transaction);
+    }
+
+    public Transaction createThirdPartyTransaction(TransactionDTO dto) {
+        Optional<Account> payerAccount = null;
+        var targetAccount = dto.getTargetAccId() != null ? Optional.of(accountService.getAccountById(dto.getTargetAccId())) : null;
+        var transaction = Transaction.fromDTO(dto, payerAccount, targetAccount);
+
+        return processTransaction(payerAccount, targetAccount, transaction);
+    }
+
+    public Transaction processTransaction(Optional<Account> payerAccount, Optional<Account> targetAccount, Transaction transaction) {
 
         if (payerAccount == null && targetAccount == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                 , "Payer or Target Account must be in our banking system");
@@ -77,15 +90,14 @@ public class TransactionService implements ITransactionService {
 
     }
 
-    //TODO check hashed key in headers, pass thirdParty username (to check)
-
-    public Transaction createThirdPartyRequestTransaction(TransactionDTO dto) {
-        return null;
-    }
-
     public void validateTransaction(Transaction transaction, Optional<Account> payer, Optional<Account> target) {
 
         if (payer != null) {
+
+            validateTimeSinceLastTransactions(payer.get());
+
+            validateNotOverDailyLimit(payer.get(), transaction);
+
             utils.validateLoggedUserIsAccOwner(payer.get());
 
             validateFunds(transaction, payer.get());
@@ -100,14 +112,11 @@ public class TransactionService implements ITransactionService {
         }
 
         if (transaction.getPayerThirdPartyAcc() != null) {
-            //validate username (from context from hashed key??) is owner of payer third party account
 
             if (transaction.getSecretKey() != null) {
-                //target.ifPresent(account -> validateSecretKey(transaction.getSecretKey(), account));
                 if (target != null) validateSecretKey(transaction.getSecretKey(), target.get());
-            }
 
-            if (transaction.getSecretKey() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+            } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                     , "Transaction failed, Third Parties must provide Target Account Secret Key");
         }
 
@@ -117,11 +126,10 @@ public class TransactionService implements ITransactionService {
 
     }
 
-
     private void validateAccountStatus(Account account) {
         //validating account isn't frozen
         if (account.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
-                , "Transaction failed, Payer Account is frozen");
+                , "Transaction failed, Account is frozen");
     }
 
     private void validateFunds(Transaction transaction, Account payer) {
@@ -129,7 +137,7 @@ public class TransactionService implements ITransactionService {
         BigDecimal payerBalance = payer.getBalance().getAmount();
         BigDecimal amount = transaction.getAmount().getAmount();
 
-        if (amount.compareTo(payerBalance) == 1) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+        if (amount.compareTo(payerBalance) > 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST
                 , "Transaction failed, insufficient funds");
     }
 
@@ -219,7 +227,8 @@ public class TransactionService implements ITransactionService {
 
             }
 
-        } else if (accountType.contains(".CheckingAccount")) {
+        }
+        if (accountType.contains(".CheckingAccount")) {
             var targetCheckingAcc = checkingAccountRepository.findById(account.getId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Savings Account found with ID " + account.getId()));
 
@@ -244,5 +253,71 @@ public class TransactionService implements ITransactionService {
 
     }
 
+    @Override
+    public List<Transaction> findByPayerAccIdOrderedByDate(Integer id) {
+
+        var foundAccount = accountService.getAccountById(id);
+
+        var accountList = transactionRepository.findByPayerAccOrderByTransferDate(foundAccount);
+
+        var mostRecentAccount = accountList.get(accountList.size() - 1);
+
+        log.info(Color.YELLOW_BOLD_BRIGHT + "Most recent is {}"
+                + Color.RESET, mostRecentAccount);
+
+        return transactionRepository.findByPayerAccOrderByTransferDate(foundAccount);
+    }
+
+
+    public void validateTimeSinceLastTransactions(Account payer) {
+
+        var accountList = transactionRepository.findByPayerAccOrderByTransferDate(payer);
+
+        if (accountList.size() > 0) {
+
+            var mostRecentAccountTime = accountList.get(accountList.size() - 1).getTransferDate();
+
+            var now = Instant.now();
+
+            var duration = now.toEpochMilli() - mostRecentAccountTime.toEpochMilli();
+
+            if (duration < 1000) {
+
+                accountService.changeAccountStatus(payer.getId(), new AccountStatusDTO(Status.FROZEN));
+
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+                        , "Transaction failed, fraud detected as your last transaction was {}" + duration +
+                        " seconds ago. Account frozen");
+            }
+
+        }
+    }
+
+    public void validateNotOverDailyLimit(Account payer, Transaction transaction) {
+
+        var maxDailyAmount = transactionRepository.findHighestDailyTransactionByAccount(payer);
+
+        if (maxDailyAmount != null) {
+
+            var max = maxDailyAmount.multiply(BigDecimal.valueOf(1.5));
+            var todayAmount = transactionRepository.findTodayTotalTransactions(payer);
+            var todayTotalAmount = todayAmount == null ? transaction.getAmount().getAmount()
+                    : todayAmount.add(transaction.getAmount().getAmount());
+
+            log.info(Color.YELLOW_BOLD_BRIGHT + "Accounts max daily amount is {} times 1.5 {}"
+                    + Color.RESET, maxDailyAmount, max);
+            log.info(Color.YELLOW_BOLD_BRIGHT + "Accounts today's amount is {} plus transaction trying to make {}"
+                    + Color.RESET, todayAmount, todayTotalAmount);
+
+            if (todayTotalAmount.compareTo(max) > 0 && todayAmount.compareTo(BigDecimal.valueOf(500)) > 0) {
+
+                accountService.changeAccountStatus(payer.getId(), new AccountStatusDTO(Status.FROZEN));
+
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST
+                        , "Transaction failed, fraud detected as transactions in the las 24 hours are higher than 150% of" +
+                        " your usual daily transactions. Account frozen");
+            }
+        }
+    }
 
 }

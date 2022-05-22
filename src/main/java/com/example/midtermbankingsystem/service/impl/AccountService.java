@@ -39,8 +39,7 @@ public class AccountService implements IAccountService {
         Account account = getAccountById(id);
 
         try {
-            var status = Status.valueOf(accountStatusDTO.getStatus().toUpperCase());
-            account.setStatus(status);
+            account.setStatus(accountStatusDTO.getStatus());
             accountRepository.save(account);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account Status value not valid.");

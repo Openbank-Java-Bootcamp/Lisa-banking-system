@@ -83,7 +83,10 @@ Other than transactions, account holders can acces their accounts by logging in 
 Some things that have helped me solve errors or widen my knowledge:
 
 https://stackoverflow.com/questions/15203485/spring-test-security-how-to-mock-authentication
+
 https://fasterxml.github.io/jackson-modules-java8/javadoc/datetime/2.9/com/fasterxml/jackson/datatype/jsr310/JavaTimeModule.html
+
 https://www.netsurfingzone.com/hibernate/failed-to-lazily-initialize-a-collection-of-role-could-not-initialize-proxy-no-session/
+
 https://stackoverflow.com/questions/23645091/spring-data-jpa-and-hibernate-detached-entity-passed-to-persist-on-manytomany-re
-https://stackoverflow.com/questions/23645091/spring-data-jpa-and-hibernate-detached-entity-passed-to-persist-on-manytomany-re
+

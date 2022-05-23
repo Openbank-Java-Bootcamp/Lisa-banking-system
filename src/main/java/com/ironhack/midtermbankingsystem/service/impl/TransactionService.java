@@ -204,7 +204,7 @@ public class TransactionService implements ITransactionService {
         if (target != null) findMinimumBalanceAndApplyFee(target.get());
     }
 
-    private void findMinimumBalanceAndApplyFee(Account account) {
+    public void findMinimumBalanceAndApplyFee(Account account) {
 
         String accountType = account.getClass().toString();
 
@@ -270,8 +270,8 @@ public class TransactionService implements ITransactionService {
                 accountService.changeAccountStatus(payer.getId(), new AccountStatusDTO(Status.FROZEN));
 
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST
-                        , "Transaction failed, fraud detected as your last transaction was {}" + duration +
-                        " seconds ago. Account frozen");
+                        , "Transaction failed, fraud detected as your last transaction was less than a second ago." +
+                        " Account frozen");
             }
 
         }

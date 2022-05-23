@@ -10,7 +10,6 @@ import com.ironhack.midtermbankingsystem.model.Address;
 import com.ironhack.midtermbankingsystem.model.Admin;
 import com.ironhack.midtermbankingsystem.model.SavingsAccount;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +117,7 @@ class SavingsAccountControllerTest {
 
         assertTrue(result.getResponse().getContentAsString().contains("100"));
 
-        Assertions.assertEquals("grillito", savingsAccountRepository.findById(foundSavingsAccount.getId()).get()
+        assertEquals("grillito", savingsAccountRepository.findById(foundSavingsAccount.getId()).get()
                 .getPrimaryOwner().getUsername());
     }
 }

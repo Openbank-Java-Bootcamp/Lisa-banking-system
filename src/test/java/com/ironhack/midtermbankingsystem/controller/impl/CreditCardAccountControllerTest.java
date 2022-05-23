@@ -118,7 +118,7 @@ class CreditCardAccountControllerTest {
 
         assertTrue(result.getResponse().getContentAsString().contains("100"));
 
-        Assertions.assertEquals("grillito", creditCardAccountRepository.findById(foundCreditCardAccount.getId()).get()
+        assertEquals("grillito", creditCardAccountRepository.findById(foundCreditCardAccount.getId()).get()
                 .getPrimaryOwner().getUsername());
     }
 }

@@ -10,7 +10,6 @@ import com.ironhack.midtermbankingsystem.repository.AdminRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ironhack.midtermbankingsystem.model.*;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +91,6 @@ class AccountControllerTest {
     }
 
     @Test
-//    @WithMockUser(username = "admin", password = "1234", roles = "ADMIN")
     void patchAccountStatus() throws Exception {
         String body = objectMapper.writeValueAsString(new AccountStatusDTO(Status.FROZEN));
 
@@ -102,7 +100,7 @@ class AccountControllerTest {
                 .getId()).content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
 
         assertTrue(result.getResponse().getContentAsString().contains("FROZEN"));
-        Assertions.assertEquals(Status.FROZEN, accountRepository.findById(foundCheckingAccount.getId()).get().getStatus());
+        assertEquals(Status.FROZEN, accountRepository.findById(foundCheckingAccount.getId()).get().getStatus());
     }
 
     @Test
@@ -116,7 +114,7 @@ class AccountControllerTest {
 
         assertTrue(result.getResponse().getContentAsString().contains("2222"));
 
-        Assertions.assertEquals(new BigDecimal(2222).setScale(2, RoundingMode.HALF_EVEN),
+        assertEquals(new BigDecimal(2222).setScale(2, RoundingMode.HALF_EVEN),
                 accountRepository.findById(foundCheckingAccount.getId()).get().getBalance().getAmount());
     }
 
@@ -131,7 +129,7 @@ class AccountControllerTest {
 
         assertTrue(result.getResponse().getContentAsString().contains("3000"));
 
-        Assertions.assertEquals(new BigDecimal(3000).setScale(2, RoundingMode.HALF_EVEN),
+        assertEquals(new BigDecimal(3000).setScale(2, RoundingMode.HALF_EVEN),
                 accountRepository.findById(foundCheckingAccount.getId()).get().getBalance().getAmount());
     }
 

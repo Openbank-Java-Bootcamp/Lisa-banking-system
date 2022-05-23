@@ -5,7 +5,6 @@ import com.ironhack.midtermbankingsystem.model.AccountHolder;
 import com.ironhack.midtermbankingsystem.model.Address;
 import com.ironhack.midtermbankingsystem.repository.AccountHolderRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class AccountHolderServiceTest {
@@ -53,7 +54,7 @@ class AccountHolderServiceTest {
 
         AccountHolder accountHolder = accountHolderService.saveAccountHolder(dto);
 
-        Assertions.assertEquals(accountHolderRepository.findById(accountHolder.getId()).get().getUsername(), accountHolder.getUsername());
+        assertEquals(accountHolderRepository.findById(accountHolder.getId()).get().getUsername(), accountHolder.getUsername());
     }
 
 }

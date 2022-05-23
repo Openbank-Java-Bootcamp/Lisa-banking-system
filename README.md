@@ -2,13 +2,13 @@
 
 ## Description of the project
 
-In this banking system, `Admin` users can create `Account Holder` and `Third Party` users, and account holders' accounts. 
+In this banking system, `Admin` users can create `Account Holder` and `Third Party` users, and account holders' accounts.
 
-There are four  types of accounts: `Student Checking`, `Checking`, `Savings`, and `Credit Card`. Appart from their attributes (seen in the class diagram), these accounts have some specifications:
-1. **Checking Accounts** 
+There are four types of accounts: `Student Checking`, `Checking`, `Savings`, and `Credit Card`. Apart from their attributes (seen in the class diagram), these accounts have some specifications:
+1. **Checking Accounts**
 * Are created when selected, and when the *primary owner* of that account is over 24 years. If not a **Student Checking Account** is created.
 * Their minimum balance is 250.
-* Their monthly maintnance fee is 12.
+* Their monthly maintenance fee is 12.
 
 2. **Savings Accounts**
 * Their minimum balance must be between 100 and 1000, if not defined the default is 1000.
@@ -18,24 +18,24 @@ There are four  types of accounts: `Student Checking`, `Checking`, `Savings`, an
 * Their credit limit must be between 100 and 100,000, if not defined the default is 100.
 * Their interest rate, which is added monthly, must be between 0.1 and 0.2, if not defined the default is  0.2.
 
-In order to send or recieve money, the system uses `Transactions` which, apart from applying said transaction to the accounts, carries out different things:
+To send or receive money, the system uses `Transactions` which, apart from applying said transaction to the accounts, carries out different things:
 
-1. **Penalty fees** are applied for account types which have a minimum balance. Whenever an account holder tries to transfer funds, this method applies the penalty fee of 40 if the account is below its minimum balance. 
+1. **Penalty fees** are applied for account types that have a minimum balance. Whenever an account holder tries to transfer funds, this method applies the penalty fee of 40 if the account is below its minimum balance.
 
 2. **Validations** this method validates different aspects of the transaction:
 * It validates the logged account holder is a primary or secondary owner of the *payer account*, so it can transfer funds.
-* It validates the *payer account* has sufficient funds to make the transaction.
-* It validates both the *payer account* and the *target account* aren't frozen.
+* It validates that the *payer account* has sufficient funds to make the transaction.
+* It validates that both the *payer account* and the *target account* aren't frozen.
 * It validates the *target account* recipient's name.
-* It validates, in the case of *third party* transactions, the provided *secret key* belongs to the *target account*.
-* It validates, for *third party* transactions , that the *hashed key* present in the *HTTP request header* belongs to the third party.
+* It validates, in the case of *third party* transactions, that the provided *secret key* belongs to the *target account*.
+* It validates, for *third party* transactions, that the *hashed key* present in the *HTTP request header* belongs to the third party.
 
 3. **Fraud Detection** uses two validations to make sure there isn't fraudulent activity:
 * It validates the time passed since the *payer account's* last transaction is over a second ago, if not it freezes the account.
-* It validates that, in the last 24 hours, the *payer account's* total transactions aren't over 150% of the highest daily total amount of transactions for that account (but has a minimum of 500, in case the *payer account* hasn't been very active). If not the system freezes the account. 
+* It validates that, in the last 24 hours, the *payer account's* total transactions aren't over 150% of the highest daily total amount of transactions for that account (but has a minimum of 500, in case the *payer account* hasn't been very active). If not the system freezes the account.
 
 
-Other than transactions, account holders can acces their accounts by logging in with their credentials. When users access their saving or credit card accounts, **interest rates** are applied to their accounts, verifying the time elapsed since the last interest rate was applied and adding that sum to the account's balance. 
+Other than transactions, account holders can access their accounts by logging in with their credentials. When users access their savings or credit card accounts, **interest rates** are applied to their accounts, verifying the time elapsed since the last interest rate was applied and adding that sum to the account's balance.
 
 ## Set Up
 
@@ -43,10 +43,18 @@ Other than transactions, account holders can acces their accounts by logging in 
 
 2. Open the directory as a project on a IDE as IntelliJ.
 
-3. Run the *MidtermBankingSystemApplication.java * file on the path:
+3. Create the database `banking_system_db` in your SQL Workbench.
+
+4. Run the *MidtermBankingSystemApplication.java * file on the path:
 
 ```
 ./src/main/java/com/ironhack/midtermbankingsystem/MidtermBankingSystemApplication.java
+```
+
+5. After running, check the 12 tables are correctly created, and run  this script in the workbench to insert the data:
+
+```
+./banking_system_db_script.sql
 ```
 
 ### Technologies Used
@@ -82,11 +90,15 @@ Other than transactions, account holders can acces their accounts by logging in 
 
 Some things that have helped me solve errors or widen my knowledge:
 
-https://stackoverflow.com/questions/15203485/spring-test-security-how-to-mock-authentication
+[Rest Headers](https://www.baeldung.com/spring-rest-http-headers)
 
-https://fasterxml.github.io/jackson-modules-java8/javadoc/datetime/2.9/com/fasterxml/jackson/datatype/jsr310/JavaTimeModule.html
+[Adding Headers in Postman](https://www.baeldung.com/postman-add-headers-pre-request)
 
-https://www.netsurfingzone.com/hibernate/failed-to-lazily-initialize-a-collection-of-role-could-not-initialize-proxy-no-session/
+[Mock Authentication for Spring Tests](https://stackoverflow.com/questions/15203485/spring-test-security-how-to-mock-authentication)
 
-https://stackoverflow.com/questions/23645091/spring-data-jpa-and-hibernate-detached-entity-passed-to-persist-on-manytomany-re
+[JavaTimeModule to fix an error in ObjectMapper and LocalDate](https://fasterxml.github.io/jackson-modules-java8/javadoc/datetime/2.9/com/fasterxml/jackson/datatype/jsr310/JavaTimeModule.html)
+
+[Fixing a lazy initialize error i](https://www.netsurfingzone.com/hibernate/failed-to-lazily-initialize-a-collection-of-role-could-not-initialize-proxy-no-session/)
+
+[Fixing a detached entity error](https://stackoverflow.com/questions/23645091/spring-data-jpa-and-hibernate-detached-entity-passed-to-persist-on-manytomany-re)
 

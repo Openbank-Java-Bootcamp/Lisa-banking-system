@@ -88,6 +88,8 @@ Other than transactions, account holders can access their accounts by logging in
 
 ## Resources
 
+[Trello](https://trello.com/b/nAWtjoUR/banking-system)
+
 Some things that have helped me solve errors or widen my knowledge:
 
 [Rest Headers](https://www.baeldung.com/spring-rest-http-headers)
